@@ -1,3 +1,6 @@
+from bloque import Bloque
+from juicio import Juicio
+
 import pandas as pd
 import pandas_read_xml as pdx
 from hermetrics.levenshtein import Levenshtein 
@@ -74,74 +77,89 @@ def identificar_juzgado(juzgado, lev):
         return 'S1'
     return 'juzgado desconocido'
 
-#instancias
-lev=Levenshtein()
-# Ruta al archivo Excel
-ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/junio/Listado juicios JUNIO.xlsx'
+def crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios):
+    return Bloque(num_juicios, fecha_act, juzgado_act, list_juicios)
 
-# Leer el archivo Excel en un DataFrame de pandas
-datos_excel = pd.read_excel(ruta_archivo)
-filas, columnas = datos_excel.shape
-cont_fila= 0
-cont_col= 0
-# Mostrar los primeros registros del DataFrame
+def obtenerBloques():
+    #instancias
+    lev=Levenshtein()
+    # Ruta al archivo Excel
+    ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/junio/Listado juicios JUNIO.xlsx'
 
-#lista_de_fechas = datos_excel['Unnamed: 0']
-#lista_de_juzgados = datos_excel['Unnamed: 1']
+    # Leer el archivo Excel en un DataFrame de pandas
+    datos_excel = pd.read_excel(ruta_archivo)
+    filas, columnas = datos_excel.shape
+    cont_fila= 0
+    cont_col= 0
+    # Mostrar los primeros registros del DataFrame
 
-cont_fila = buscar_primera_fila(datos_excel,lev)
-cont_fila = cont_fila + 1
-fecha_act = datos_excel.iloc[cont_fila, 0]
-celda_act = fecha_act
-juzgado_act = ''
-num_juicios = 0
-letrados_con_juicios = []
-n_juicios = []
-num_juicios_total = 0
-while cont_fila < filas-1:
-    print(fecha_act+":")
+    #lista_de_fechas = datos_excel['Unnamed: 0']
+    #lista_de_juzgados = datos_excel['Unnamed: 1']
 
-    while  celda_act == fecha_act or type(celda_act) == float:
-        if type(celda_act) == str:
-                 
-
-            juzgado=identificar_juzgado(datos_excel.iloc[cont_fila, 1], lev)
-            if juzgado != juzgado_act:
-                if num_juicios != 0:
-                    print(str(num_juicios),end="")
-                    print("   ",end="")
-                    print(letrados_con_juicios, end="")
-                    print(n_juicios)
-                juzgado_act = juzgado
-                print(juzgado_act+"|", end='')
-                num_juicios_total=num_juicios_total+num_juicios
-                num_juicios = 0
-                letrados_con_juicios = []
-                n_juicios = []
-            
-            letrado = datos_excel.iloc[cont_fila, 18]
-            if type(letrado) == str:
-                if letrado in letrados_con_juicios:
-                    num_letrado=letrados_con_juicios.index(letrado)
-                    n_juicios[num_letrado]= n_juicios[num_letrado] + 1
-                else:
-                    letrados_con_juicios.append(letrado)
-                    n_juicios.append(1)
-
-            
-            num_juicios=num_juicios+1
-            
-
-        cont_fila = cont_fila + 1
-        celda_act = datos_excel.iloc[cont_fila, 0]
-    print(str(num_juicios), end="")
-    print("   ", end='')
-    print(letrados_con_juicios,end="")
-    print(n_juicios)
+    cont_fila = buscar_primera_fila(datos_excel,lev)
+    cont_fila = cont_fila + 1
+    fecha_act = datos_excel.iloc[cont_fila, 0]
+    celda_act = fecha_act
     juzgado_act = ''
-    fecha_act = celda_act
-    num_juicios_total = num_juicios_total + num_juicios
     num_juicios = 0
-print("Juicios totales: "+str(num_juicios_total))
+    letrados_con_juicios = []
+    n_juicios = []
+    num_juicios_total = 0
+    list_juicios = []
+    list_bloques = []
+    while cont_fila < filas-1:
+        print(fecha_act+":")
 
-#print(buscar_primera_fila(datos_excel,lev))
+        while  celda_act == fecha_act or type(celda_act) == float:
+            if type(celda_act) == str:
+                    
+
+                juzgado=identificar_juzgado(datos_excel.iloc[cont_fila, 1], lev)
+                if juzgado != juzgado_act:
+                    if num_juicios != 0:
+                        print(str(num_juicios),end="")
+                        print("   ",end="")
+                        print(letrados_con_juicios, end="")
+                        print(n_juicios)
+                        bloque = crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios)
+                        list_bloques.append(bloque)
+
+                    juzgado_act = juzgado
+                    print(juzgado_act+"|", end='')
+                    num_juicios_total=num_juicios_total+num_juicios
+                    num_juicios = 0
+                    letrados_con_juicios = []
+                    n_juicios = []
+                    list_juicios = []
+                
+                letrado = datos_excel.iloc[cont_fila, 18]
+                juicio = Juicio()
+                
+                if type(letrado) == str:
+                    juicio.preparado_por = letrado
+                    if letrado in letrados_con_juicios:
+                        num_letrado=letrados_con_juicios.index(letrado)
+                        n_juicios[num_letrado]= n_juicios[num_letrado] + 1
+                    else:
+                        letrados_con_juicios.append(letrado)
+                        n_juicios.append(1)
+
+                list_juicios.append(juicio)
+                num_juicios=num_juicios+1
+                
+
+            cont_fila = cont_fila + 1
+            celda_act = datos_excel.iloc[cont_fila, 0]
+        print(str(num_juicios), end="")
+        print("   ", end='')
+        print(letrados_con_juicios,end="")
+        print(n_juicios)
+        bloque = crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios)
+        list_bloques.append(bloque)
+        juzgado_act = ''
+        fecha_act = celda_act
+        num_juicios_total = num_juicios_total + num_juicios
+        num_juicios = 0
+    print("Juicios totales: "+str(num_juicios_total))
+    return list_bloques
+    #print(buscar_primera_fila(datos_excel,lev))
