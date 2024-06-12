@@ -1,5 +1,6 @@
 from bloque import Bloque
 from juicio import Juicio
+from metodos_utiles import str_to_datetime
 
 import pandas as pd
 import pandas_read_xml as pdx
@@ -121,7 +122,7 @@ def obtenerBloques():
                         print("   ",end="")
                         print(letrados_con_juicios, end="")
                         print(n_juicios)
-                        bloque = crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios)
+                        bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, num_juicios, list_juicios)
                         list_bloques.append(bloque)
 
                     juzgado_act = juzgado
@@ -133,10 +134,12 @@ def obtenerBloques():
                     list_juicios = []
                 
                 letrado = datos_excel.iloc[cont_fila, 18]
+                demandante = datos_excel.iloc[cont_fila, 12]
                 juicio = Juicio()
                 
                 if type(letrado) == str:
                     juicio.preparado_por = letrado
+                    juicio.demanda = demandante
                     if letrado in letrados_con_juicios:
                         num_letrado=letrados_con_juicios.index(letrado)
                         n_juicios[num_letrado]= n_juicios[num_letrado] + 1
@@ -154,7 +157,7 @@ def obtenerBloques():
         print("   ", end='')
         print(letrados_con_juicios,end="")
         print(n_juicios)
-        bloque = crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios)
+        bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, num_juicios, list_juicios)
         list_bloques.append(bloque)
         juzgado_act = ''
         fecha_act = celda_act
