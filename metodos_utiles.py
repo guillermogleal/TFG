@@ -46,3 +46,99 @@ def get_letrado_por_nombre(nombre_letrado, list_letrados):
     while list_letrados[i].nombre != nombre_letrado:
         i = i+1
     return list_letrados[i]
+
+def get_n_fechas_con_juicios(list_bloques):
+    list_fechas = []
+    cont = 0
+
+    for bloque in list_bloques:
+        if not (bloque.fecha in list_fechas):
+
+            list_fechas.append(bloque.fecha)
+            cont = cont + 1
+
+    return cont
+
+def get_total_juicios(list_bloques):
+    cont = 0
+    
+    for bloque in list_bloques:
+        cont = cont + len(bloque.lista_de_juicios)
+    
+    return cont
+
+def es_div_decimal(numero1, numero2):
+    if numero1 % numero2 == 0:
+        return False
+    else:
+        return True
+    
+def get_letrados_con_baja(list_restricciones, list_letrados):
+    letrados_con_baja = []
+    for restric in list_restricciones:
+        if isinstance(restric, DISPONIBILIDAD):
+            letrados_con_baja.append(restric.letrado)
+    return letrados_con_baja
+
+def get_tipo_restricciones(list_restricciones, tipo):
+    list = []
+
+    for restric in list_restricciones:
+        if isinstance(restric, tipo):
+            list.append(restric)
+    return list 
+
+def get_letrado_jefe(list_letrados):
+    for letrado in list_letrados:
+        if letrado.jefe == True:
+            break
+    return letrado
+
+def round_up (num):
+    redondeo = round(num)
+    if redondeo < num:
+        redondeo = redondeo+1
+    
+    return redondeo
+
+def is_bloque_fuera(bloque):
+    return bloque.juzgado[0] == 'F' or bloque.juzgado[0] == 'S'
+            
+
+def get_bloques_fuera(list_bloques):
+    list_bloques_fuera = []
+    
+
+    for bloque in list_bloques:
+        if bloque.juzgado[0] == 'F' or bloque.juzgado[0] == 'S':
+            list_bloques_fuera.append(bloque)
+
+    return list_bloques_fuera
+
+def get_n_bloques_asignados_semana(bloque, letrado, diseño): #cambiar lista a contador si no hace falta los bloques
+    cont = 0
+
+    week_target = bloque.fecha.isocalendar()[1]
+
+    for bloque_dis in diseño:
+        if bloque_dis.letrado == letrado:
+            week_dis = bloque_dis.fecha.isocalendar()[1]
+
+            if week_dis == week_target:
+                cont = cont + 1
+
+    return cont
+
+def get_bloques_asignados_semana(bloque, letrado, diseño): 
+    list_bloques = []
+
+    week_target = bloque.fecha.isocalendar()[1]
+
+    for bloque_dis in diseño:
+        if bloque_dis.letrado == letrado:
+            week_dis = bloque_dis.fecha.isocalendar()[1]
+
+            if week_dis == week_target:
+                list_bloques.append(bloque_dis)
+
+    return list_bloques

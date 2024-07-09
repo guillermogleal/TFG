@@ -1,6 +1,6 @@
 from requisitos import Requisitos
 from conocimiento_especificacion import Conocimiento_de_especificacion
-class especificar():
+class Especificar():
     def metodo(requisitos : Requisitos):
         for i in requisitos.list_bloques:
 

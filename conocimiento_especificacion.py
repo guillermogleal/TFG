@@ -30,7 +30,6 @@ class Conocimiento_de_especificacion():
                     list_con_juicios.append(preparado_por)
                     list_cantidad.append(1)
         
-
         
         for n_preparados in list_cantidad:
             
