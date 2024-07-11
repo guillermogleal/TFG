@@ -15,8 +15,9 @@ class Conocimiento_de_verificacion():
         return fecha_sin_bloque or fecha_disponible or dias_semanales or dias_semanales_fuera or juicios_semanales or max_cuota_fuera or max_cuotas
     
     def cond_fecha_sin_bloque(extension, diseño):  #comprobar que el letrado no tiene un bloque asignado en esa fecha 
-
-        return [] != list(filter(lambda bloque: (bloque.fecha == extension.fecha) and bloque.asignado_a == extension.asignado_a, diseño))
+        diseño_copia = diseño.copy()
+        diseño_copia.remove(extension)
+        return [] != list(filter(lambda bloque: (bloque.fecha == extension.fecha) and bloque.asignado_a == extension.asignado_a, diseño_copia))
     
     def cond_fecha_disponible(extension, restricciones):
         no_disponible = False
@@ -75,7 +76,7 @@ class Conocimiento_de_verificacion():
 
         n_bloques_fuera = len(list_bloques_fuera)
 
-        return n_bloques_fuera > list_cuota_fuera_de_letrado[0]
+        return n_bloques_fuera > list_cuota_fuera_de_letrado[0].cuota
     
     def cond_max_cuotas(extension, restricciones, diseño):
         list_cuotas = get_tipo_restricciones(restricciones, MAX_CUOTA)
@@ -85,7 +86,7 @@ class Conocimiento_de_verificacion():
         list_bloques_asignados= list(filter(lambda bloque: (bloque.asignado_a == extension.asignado_a), diseño))
         n_juicios = get_total_juicios(list_bloques_asignados)
 
-        return n_juicios > list_cuota_letrado[0]
+        return n_juicios > list_cuota_letrado[0].cuota
 
 
                                  

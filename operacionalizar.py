@@ -8,4 +8,4 @@ class Operacionalizar():
         
         list_cuotas_fuera = Conocimiento_de_operacionalizacion.regla_cuotas_fuera(requisitos)
         
-        return [list_cuotas, list_cuotas_fuera], []
+        return list_cuotas + list_cuotas_fuera, []

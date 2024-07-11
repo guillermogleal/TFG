@@ -2,21 +2,25 @@ from Passer_from_excel import obtenerBloques
 from passer_letrados import introducir_letrados_y_disp
 from requisitos import Requisitos
 from configuracion import Configuracion
+from servicio_BD import *
 
 def print_diseño(diseño, letrados, dias_mes):
     i = 0
     list_n_juicios_letrado = []
     matriz_diseño = []
     num_letrado = 0
+    list_nombres = []
 
     for i in range(len(letrados)):
         fila = []
-        for j in range(dias_mes+1): #el +1 para que no haya dia 0
-            fila.append(0)
+        for j in range(dias_mes + 1): #el +1 para que no haya dia 0
+            fila.append("    "+ str(0))
         matriz_diseño.append(fila)
     
     for letrado in letrados:
         n_juicios_letrado = 0
+
+        list_nombres.append(letrado.nombre)
 
         bloques_de_letrado = list(filter(lambda bloque: bloque.asignado_a == letrado, diseño))
         for bloque in bloques_de_letrado:
@@ -24,12 +28,27 @@ def print_diseño(diseño, letrados, dias_mes):
             n_juicios_letrado += bloque.cantidad
             dia_fecha_bloque = fecha_bloque.day
 
-            matriz_diseño[num_letrado][dia_fecha_bloque] = bloque.juzgado + "|" + bloque.cantidad
+            str_bloque = bloque.juzgado + "|" + str(bloque.cantidad)
+            n_espacio = 5 - len(str_bloque)
+            espacio = ""
+
+            for n in range(n_espacio):
+                espacio = espacio + " "
+
+            matriz_diseño[num_letrado][dia_fecha_bloque] = espacio + str_bloque
         list_n_juicios_letrado.append(n_juicios_letrado)
         num_letrado += 1
-    
+    cont_letrado = 0
     for fila in matriz_diseño:
+        fila[0] = letrados[cont_letrado].nombre
         print(fila)
+        print("\n")
+        cont_letrado+=1
+    
+    print(list_nombres)
+
+
+    print(list_n_juicios_letrado)
 
 
 
@@ -38,7 +57,9 @@ def print_diseño(diseño, letrados, dias_mes):
 bloques = obtenerBloques()
 letrados, restricciones = introducir_letrados_y_disp()
 
-requisitos = Requisitos(bloques, letrados, restricciones)
+bloques_BD = Servicio_BD.consultar_BD
+
+requisitos = Requisitos(bloques, letrados, restricciones, bloques_BD)
 
 obj_conf = Configuracion(requisitos, letrados)
 

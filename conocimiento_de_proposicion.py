@@ -124,7 +124,7 @@ class Conocimiento_de_proposicion():
     
     def cond_tres_no_todos_seguidos(diseño, sig_bloque, letrado):
         if Conocimiento_de_proposicion.cond_tres(diseño, sig_bloque, letrado):
-            bloques_semana = get_bloques_asignados_semana(diseño, sig_bloque, letrado)
+            bloques_semana = get_bloques_asignados_semana(sig_bloque, letrado, diseño)
             
             seguidos1_2 = ((sig_bloque.fecha + timedelta(days=1)) == bloques_semana[0].fecha) or ((sig_bloque.fecha - timedelta(days=1)) == bloques_semana[0].fecha) #comprueba si el bloque nuevo y el primero de los dos semanales van seguidos
             seguidos1_3 = ((sig_bloque.fecha + timedelta(days=1)) == bloques_semana[1].fecha) or ((sig_bloque.fecha - timedelta(days=1)) == bloques_semana[1].fecha) #comprueba si el bloque nuevo y el primero de los dos semanales van seguidos
@@ -165,38 +165,38 @@ class Conocimiento_de_proposicion():
     #elige de entre los letrados que cumplen los mismo criterios según heurísticas
     def elegir_letrado(max_criteria, list_letrados, diseño, cuotas, bloque): 
         
-        if len(list_letrados)>1:
-
-            let_menos_juicios = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(list_letrados, diseño)
-
-            if len(let_menos_juicios) == 1:
-                return let_menos_juicios[0]
-            else:
-                let_menos_juicios_semana = Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(let_menos_juicios, diseño, bloque)                    
-
-                if len(let_menos_juicios_semana) == 1:
-                    return let_menos_juicios_semana[0]
+        if len(list_letrados)>1:            
+#######################################################################
+            if not is_bloque_fuera(bloque):            
+                letrados_con_mas_b_fuera = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_fuera(list_letrados, diseño)
+                if len(letrados_con_mas_b_fuera) == 1:
+                    return letrados_con_mas_b_fuera[0]
                 else:
-
-                    if not is_bloque_fuera(bloque):
-                        letrados_con_mas_b_fuera = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_fuera(let_menos_juicios_semana, diseño)
-                        
-                        if len(letrados_con_mas_b_fuera) == 1:
-                            return letrados_con_mas_b_fuera[0]
-                        else:
-                            letrados_con_menos_cuota = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(letrados_con_mas_b_fuera, cuotas)
-                            return letrados_con_menos_cuota[0]
+                    letrados_con_menos_cuota = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(letrados_con_mas_b_fuera, cuotas)
+                    if len(letrados_con_menos_cuota) == 1:
+                        return letrados_con_menos_cuota[0]
                     else:
-                        letrados_con_mas_b_coru = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_coru(let_menos_juicios_semana, diseño)
-
-                        if len(letrados_con_mas_b_coru) == 1:
-                            return letrados_con_mas_b_coru[0]
+                        let_menos_juicios_semana =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(letrados_con_menos_cuota, diseño, bloque)
+                        if len(let_menos_juicios_semana) == 1:
+                            return let_menos_juicios_semana[0]
                         else:
-                            letrados_con_menos_cuota = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(letrados_con_mas_b_coru, cuotas)
-                            return letrados_con_menos_cuota[0]
-
-                    
-
+                            let_menos_juicios = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(let_menos_juicios_semana, diseño)
+                            return let_menos_juicios[0]
+            else:
+                letrados_con_mas_b_coru = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_coru(list_letrados, diseño)
+                if len(letrados_con_mas_b_coru) == 1:
+                    return letrados_con_mas_b_coru[0]
+                else:
+                    letrados_con_menos_cuota = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(letrados_con_mas_b_coru, cuotas)
+                    if len(letrados_con_menos_cuota) == 1:
+                        return letrados_con_menos_cuota[0]
+                    else:
+                        let_menos_juicios_semana =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(letrados_con_menos_cuota, diseño, bloque)
+                        if len(let_menos_juicios_semana) == 1:
+                            return let_menos_juicios_semana[0]
+                        else:
+                            let_menos_juicios = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(let_menos_juicios_semana, diseño)
+                            return let_menos_juicios[0]
                     
         elif len(list_letrados)==1:
             return list_letrados[0]
@@ -209,7 +209,7 @@ class Conocimiento_de_proposicion():
         output_letrados = []
 
         for letrado in list_letrados:
-            letr_bloques_fuera =list(filter(lambda bloque: (is_bloque_fuera(bloque.juzgado)) and bloque.asignado_a == letrado, diseño))
+            letr_bloques_fuera =list(filter(lambda bloque: (is_bloque_fuera(bloque)) and bloque.asignado_a == letrado, diseño))
             n_bloques_fuera =len(letr_bloques_fuera)
             if n_bloques_fuera > max_bloques:
                 max_bloques = n_bloques_fuera
@@ -225,7 +225,7 @@ class Conocimiento_de_proposicion():
         output_letrados = []
 
         for letrado in list_letrados:
-            letr_bloques_coru =list(filter(lambda bloque: (not is_bloque_fuera(bloque.juzgado)) and bloque.asignado_a == letrado, diseño))
+            letr_bloques_coru =list(filter(lambda bloque: (not is_bloque_fuera(bloque)) and bloque.asignado_a == letrado, diseño))
             n_bloques_coru =len(letr_bloques_coru)
             if n_bloques_coru > max_bloques:
                 max_bloques = n_bloques_coru
@@ -263,7 +263,7 @@ class Conocimiento_de_proposicion():
 
         for letrado in list_letrados:
             cuota_de_let =list(filter(lambda restriccion: restriccion.letrado == letrado, cuotas))
-            n_cuota = cuota_de_let.cuota
+            n_cuota = cuota_de_let[0].cuota
             
             if n_cuota < min_cuota:
                 min_cuota = n_cuota

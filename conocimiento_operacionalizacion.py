@@ -24,6 +24,8 @@ class Conocimiento_de_operacionalizacion():
 
         list_cuotas = []
 
+        margen = 1       #variable para dar un poco más de flexibilidad a como de equilibrado tiene que estar el reparto en cuanto a cant de juicios total
+
         for disponibilidad in list_disponibilidad:
             if not disponibilidad.parcial and len(disponibilidad.dias_de_baja) >= 5: 
                 porcent_disp = (n_fechas-len(disponibilidad.dias_de_baja)) / n_fechas
@@ -67,7 +69,7 @@ class Conocimiento_de_operacionalizacion():
 
                 list_cuotas.append(restric_cuota)
             else:
-                restric_cuota = MAX_CUOTA(letrado, media_juicios_fin)
+                restric_cuota = MAX_CUOTA(letrado, media_juicios_fin + margen)
                 list_cuotas.append(restric_cuota)
         
         return list_cuotas

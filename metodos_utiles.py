@@ -121,7 +121,7 @@ def get_n_bloques_asignados_semana(bloque, letrado, diseño): #cambiar lista a c
     week_target = bloque.fecha.isocalendar()[1]
 
     for bloque_dis in diseño:
-        if bloque_dis.letrado == letrado:
+        if bloque_dis.asignado_a == letrado:
             week_dis = bloque_dis.fecha.isocalendar()[1]
 
             if week_dis == week_target:
@@ -135,7 +135,7 @@ def get_bloques_asignados_semana(bloque, letrado, diseño):
     week_target = bloque.fecha.isocalendar()[1]
 
     for bloque_dis in diseño:
-        if bloque_dis.letrado == letrado:
+        if bloque_dis.asignado_a == letrado:
             week_dis = bloque_dis.fecha.isocalendar()[1]
 
             if week_dis == week_target:
