@@ -13,7 +13,6 @@ class Proponer_revisar():
 
         requisitos.list_bloques.sort(key= lambda bloque: bloque.cantidad, reverse= True)
 
-        
 
         diseño_esqueletal = Especificar.metodo(requisitos)
         

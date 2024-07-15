@@ -7,7 +7,7 @@ class Conocimiento_de_especificacion():
         fecha_datetime = bloque.fecha
         list_con_juicios = []
         list_cantidad = []
-        n_mitad_bloque = len(bloque.lista_de_juicios) // 2
+        n_mitad_bloque = round(len(bloque.lista_de_juicios) / 2)
         list_nombres_letrado = get_nombres_letrado(list_letrados) 
         list_nombres_restriccion = get_nombres_restriccion(list_restricciones)
         asignable=True

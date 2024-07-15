@@ -76,6 +76,11 @@ def identificar_juzgado(juzgado, lev):
         return 'CA1C'
     elif juzgado == 'J SOC. 1 SANTIAGO DE COMPOSTELA (CAPITAL) CORUÑA, A':
         return 'S1'
+    elif juzgado == 'J SOC. 5 CORUÑA (A) (CAPITAL) CORUÑA, A':
+        return 'C5'
+    elif juzgado == 'J SOC. 6 CORUÑA (A) (CAPITAL) CORUÑA, A':
+        return 'C6'
+    
     return 'juzgado desconocido'
 
 def crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios):
@@ -85,7 +90,7 @@ def obtenerBloques():
     #instancias
     lev=Levenshtein()
     # Ruta al archivo Excel
-    ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/junio/Listado juicios JUNIO.xlsx'
+    ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/septiembre/Listado juicio SEPTIEMBRE.xlsx'
 
     # Leer el archivo Excel en un DataFrame de pandas
     datos_excel = pd.read_excel(ruta_archivo)

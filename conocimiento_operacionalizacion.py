@@ -24,7 +24,7 @@ class Conocimiento_de_operacionalizacion():
 
         list_cuotas = []
 
-        margen = 1       #variable para dar un poco más de flexibilidad a como de equilibrado tiene que estar el reparto en cuanto a cant de juicios total
+        margen = 0    #variable para dar un poco más de flexibilidad a como de equilibrado tiene que estar el reparto en cuanto a cant de juicios total
 
         for disponibilidad in list_disponibilidad:
             if not disponibilidad.parcial and len(disponibilidad.dias_de_baja) >= 5: 

@@ -149,6 +149,7 @@ class Conocimiento_de_proposicion():
     def cond_rep_juzgado_fuera(diseño, sig_bloque, letrado):
         if is_bloque_fuera(sig_bloque):
             bloques_fuera = get_bloques_fuera(diseño)
+            bloques_fuera = list(filter(lambda bloque: (bloque.juzgado[0] == "F"), bloques_fuera))
             bloques_fuera_asign = list(filter(lambda bloque: (bloque.asignado_a == letrado), bloques_fuera))
             return bloques_fuera_asign != []
 
@@ -156,6 +157,12 @@ class Conocimiento_de_proposicion():
             
             return False
     
+    def cond_rep_juzgado_semana(diseño, sig_bloque, letrado):
+        target_juzgado = sig_bloque.juzgado
+        b_asignados_juzgado_sem = list(filter(lambda bloque: (bloque.juzgado == target_juzgado) and bloque.fecha.isocalendar()[1] == sig_bloque.fecha.isocalendar()[1] and bloque.asignado_a == letrado, diseño))
+        return b_asignados_juzgado_sem != []
+
+
     def cond_rep_juzgado(diseño, sig_bloque, letrado):
         target_juzgado = sig_bloque.juzgado
         b_asignados_juzgado = list(filter(lambda bloque: (bloque.juzgado == target_juzgado) and bloque.asignado_a == letrado, diseño))
@@ -168,35 +175,53 @@ class Conocimiento_de_proposicion():
         if len(list_letrados)>1:            
 #######################################################################
             if not is_bloque_fuera(bloque):            
-                letrados_con_mas_b_fuera = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_fuera(list_letrados, diseño)
-                if len(letrados_con_mas_b_fuera) == 1:
-                    return letrados_con_mas_b_fuera[0]
-                else:
-                    letrados_con_menos_cuota = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(letrados_con_mas_b_fuera, cuotas)
-                    if len(letrados_con_menos_cuota) == 1:
-                        return letrados_con_menos_cuota[0]
-                    else:
-                        let_menos_juicios_semana =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(letrados_con_menos_cuota, diseño, bloque)
-                        if len(let_menos_juicios_semana) == 1:
-                            return let_menos_juicios_semana[0]
-                        else:
-                            let_menos_juicios = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(let_menos_juicios_semana, diseño)
-                            return let_menos_juicios[0]
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(list_letrados, diseño)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_fuera(list_letrados, diseño)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_separacion(list_letrados, diseño, bloque)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                list_letrados =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(list_letrados, diseño, bloque)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(list_letrados, cuotas)
+                
+                return list_letrados[0]
+                
+                
             else:
-                letrados_con_mas_b_coru = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_coru(list_letrados, diseño)
-                if len(letrados_con_mas_b_coru) == 1:
-                    return letrados_con_mas_b_coru[0]
-                else:
-                    letrados_con_menos_cuota = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(letrados_con_mas_b_coru, cuotas)
-                    if len(letrados_con_menos_cuota) == 1:
-                        return letrados_con_menos_cuota[0]
-                    else:
-                        let_menos_juicios_semana =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(letrados_con_menos_cuota, diseño, bloque)
-                        if len(let_menos_juicios_semana) == 1:
-                            return let_menos_juicios_semana[0]
-                        else:
-                            let_menos_juicios = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(let_menos_juicios_semana, diseño)
-                            return let_menos_juicios[0]
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(list_letrados, diseño)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_coru(list_letrados, diseño)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_separacion(list_letrados, diseño, bloque)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+                
+                list_letrados =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(list_letrados, diseño, bloque)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_menos_cuota(list_letrados, cuotas)
+                
+                
+                
+                return list_letrados[0]
                     
         elif len(list_letrados)==1:
             return list_letrados[0]
@@ -294,3 +319,27 @@ class Conocimiento_de_proposicion():
                 output_letrados.append(letrado)
             
         return output_letrados
+    
+    def get_letrados_con_mas_separacion(list_letrados, diseño, bloque):           #letrados que tengan más días de margen entre el bloque y el más cercano en cuanto fecha
+        margen_max = 0
+        list_margen_letrados = list_letrados
+        
+        for letrado in list_letrados:
+            list_b_let_semana = get_bloques_asignados_semana(bloque, letrado, diseño)
+
+            if list_b_let_semana != []:
+                list_margenes = []
+                for bloque_sem in list_b_let_semana:
+                    margen = bloque_sem.fecha - bloque.fecha
+                    diferencia_dias = margen.days
+                    list_margenes.append(diferencia_dias)
+                
+                min_margen = min(list_margenes)
+                if min_margen > margen_max:
+                    margen_max = min_margen
+                    list_margen_letrados = []
+                    list_margen_letrados.append(letrado)
+                elif min_margen == margen_max:
+                    list_margen_letrados.append(letrado)
+        
+        return list_margen_letrados

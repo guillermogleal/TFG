@@ -35,7 +35,7 @@ def print_diseño(diseño, letrados, dias_mes):
             for n in range(n_espacio):
                 espacio = espacio + " "
 
-            matriz_diseño[num_letrado][dia_fecha_bloque] = espacio + str_bloque
+            matriz_diseño[num_letrado][dia_fecha_bloque] =  espacio + str(dia_fecha_bloque)+"|"+str_bloque
         list_n_juicios_letrado.append(n_juicios_letrado)
         num_letrado += 1
     cont_letrado = 0
@@ -65,6 +65,6 @@ obj_conf = Configuracion(requisitos, letrados)
 
 diseño = obj_conf.execute()
 
-print_diseño(diseño, letrados, 31)
+print_diseño(diseño, letrados, 30)
 
 print("llega al final")
