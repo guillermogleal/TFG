@@ -1,6 +1,7 @@
-from conexion_DB import *
+from conexion_BD import *
 from bloque_BD import *
 from datetime import datetime
+from letrado import Letrado
 
 class Servicio_BD:
 
@@ -19,7 +20,10 @@ class Servicio_BD:
     def añadir_reparto_BD(list_bloques):
         list_bloques_BD = []
         for bloque in list_bloques:
-            bloque_BD = Bloque_BD(bloque.cantidad, bloque.fecha, bloque.juzgado, bloque.asignado_a)
+            if isinstance(bloque.asignado_a, Letrado):
+                bloque_BD = Bloque_BD(bloque.cantidad, bloque.fecha, bloque.juzgado, bloque.asignado_a.nombre)
+            else:
+                bloque_BD = Bloque_BD(bloque.cantidad, bloque.fecha, bloque.juzgado, bloque.asignado_a)
             list_bloques_BD.append(bloque_BD)
 
         session = Conexion_BD.obtener_sesion()
@@ -34,7 +38,7 @@ class Servicio_BD:
         session.close()
 
 
-
+"""
 lista_bloques_BD = []
 
 lista_bloques_BD.append(Bloque_BD(11, datetime(2024, 7, 4), 'F1', "ANA MARIA PARDO COSTAS"))
@@ -135,4 +139,9 @@ lista_bloques_BD.append(Bloque_BD(1, datetime(2024, 7, 2), 'R', "ANGEL GONZALEZ 
 lista_bloques_BD.append(Bloque_BD(1, datetime(2024, 7, 4), 'C3', "MARIA JESUS LEDO MOURE"))
 lista_bloques_BD.append(Bloque_BD(1, datetime(2024, 7, 17), 'C6', "ANGEL GONZALEZ QUINTAS"))
 lista_bloques_BD.append(Bloque_BD(1, datetime(2024, 7, 18), 'C3', "ANA MARIA PARDO COSTAS"))
+
+"""
+BD_reparto =Servicio_BD.consultar_BD()
+
+llega = True
 

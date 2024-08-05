@@ -43,6 +43,38 @@ def obtener_primera_fila(datos_excel):
     
     return cont
 
+def crear_bloque(cont_fila, cont_column, datos_excel, fila_con_dias, mes, año):
+    letrado_asignado = datos_excel.iloc[cont_fila, 0]
+    fecha = datetime(año, mes, int(datos_excel.iloc[fila_con_dias, cont_column]))
+    juzgado = datos_excel.iloc[cont_fila, cont_column]
+    cantidad = datos_excel.iloc[cont_fila, cont_column + 1]
+
+    bloque_BD = Bloque_BD(cantidad, fecha, juzgado, letrado_asignado)
+    return bloque_BD
+
+
+def recorrer_semana(cont_fila, cont_column, datos_excel, mes, año):
+    list_bloques_sem = []
+    fila_con_dias = cont_fila - 1
+
+    while isinstance(datos_excel.iloc[cont_fila, cont_column-1], str) :             #mientras la primera columna no esté vacía en esa fila, será una fila con bloques y no días
+
+        while cont_column < 13:
+
+            if isinstance(datos_excel.iloc[cont_fila, cont_column], str):
+                bloque_sem = crear_bloque(cont_fila, cont_column, datos_excel, fila_con_dias, mes, año)
+                list_bloques_sem.append(bloque_sem)
+
+            cont_column+=2
+
+        cont_column = 1
+        cont_fila += 1
+    
+    cont_fila+=1
+
+    return list_bloques_sem, cont_fila, cont_column
+
+
 
 def obtener_list_bloques_de_reparto(datos_excel):
 
@@ -52,14 +84,24 @@ def obtener_list_bloques_de_reparto(datos_excel):
 
     #primera_fila = obtener_primera_fila(datos_excel)
 
+    año = 2024                                                  #obtener año
+
     fila_con_numeros = 0
+    serie_mes = datos_excel.iloc[:,0]                           #obtener mes a partir del nombre de la columna
+    mes_name = serie_mes.name
+    mes = obtener_mes(mes_name)                                    
 
-    mes = obtener_mes(datos_excel.iloc[1, 0])
+    cont_fila = 2                                               #fila y columna iniciales
+    cont_column = 1
 
-    cont_fila = 1
-    cont_column = 0
-    cont_fila +=1                  #para saltar la celda del año
     
+    while isinstance(datos_excel.iloc[cont_fila, cont_column-1], str):
+        list_bloques_sem, cont_fila, cont_column = recorrer_semana(cont_fila, cont_column, datos_excel, mes, año)
+        diseño_BD.extend(list_bloques_sem)
+
+
+    return diseño_BD
+    """
     while datos_excel.iloc[cont_fila+1, 0] != "final" and cont_fila+1!=datos_excel.shape[0]:
         while type(datos_excel.iloc[cont_fila, 0]) == float and cont_fila!=datos_excel.shape[0]:
             cont_fila+=1
@@ -97,13 +139,16 @@ def obtener_list_bloques_de_reparto(datos_excel):
         while type(datos_excel.iloc[cont_fila, cont_column]) != float and cont_fila!=datos_excel.shape[0] and cont_column!=datos_excel.shape[1]:
             cont_fila += 1
     return diseño_BD
+    """
 
 
-ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/junio/Reparto JUNIO 2024.xlsx'
+def obtener_reparto_de_excel(ruta_archivo):
+#ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/junio/Reparto JUNIO 2024.xlsx'
 
-    # Leer el archivo Excel en un DataFrame de pandas
-datos_excel = pd.read_excel(ruta_archivo)
-diseño_BD = obtener_list_bloques_de_reparto(datos_excel)
+        # Leer el archivo Excel en un DataFrame de pandas
+    datos_excel = pd.read_excel(ruta_archivo)
+    diseño_BD = obtener_list_bloques_de_reparto(datos_excel)
+    return diseño_BD
 
 #print(type(datos_excel.iloc[13,13]) == np.float64)
 

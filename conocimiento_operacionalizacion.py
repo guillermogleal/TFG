@@ -1,5 +1,6 @@
 from metodos_utiles import get_n_fechas_con_juicios, get_total_juicios, es_div_decimal, get_tipo_restricciones, get_letrado_jefe, round_up, get_bloques_fuera
 from restriccion import *
+from preferencia import *
 
 
 PORCENT_JEFE = 0.4
@@ -65,7 +66,7 @@ class Conocimiento_de_operacionalizacion():
                 index = letrad_con_baja.index(letrado)
                 cuota = media_juicios_fin * list_porcent[index]
                 
-                restric_cuota = MAX_CUOTA(letrado, round_up(cuota))
+                restric_cuota = MAX_CUOTA(letrado, round_up(cuota) + margen )
 
                 list_cuotas.append(restric_cuota)
             else:
@@ -89,3 +90,14 @@ class Conocimiento_de_operacionalizacion():
 
         return list_cuota_fuera
 
+    def regla_no_juzgado(requisitos):
+        list_bloques_BD = requisitos.list_bloques_BD
+        list_no_juzgado = []                                        #lista de preferencias del tipo no juzgado
+
+        for bloque_new in list_bloques_BD:
+
+            if list(filter(lambda pref: pref.juzgado == bloque_new.juzgado  and pref.letrado == bloque_new.asignado_a, list_no_juzgado)) == [] :
+                no_juzgado = NO_JUZGADO(bloque_new.asignado_a, bloque_new.juzgado)
+                list_no_juzgado.append(no_juzgado)
+        
+        return list_no_juzgado

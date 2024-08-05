@@ -58,12 +58,26 @@ class Conocimiento_de_proposicion():
                     letrados_que_cumplen.append(letrado)
                 elif max_criteria == 5:
                     letrados_que_cumplen.append(letrado)
-            else:
+            elif Conocimiento_de_proposicion.cond_rep_juzgado_fuera_mes(sig_bloque, letrado, preferencias):
                 if max_criteria < 6:
                     max_criteria = 6
                     letrados_que_cumplen = []
                     letrados_que_cumplen.append(letrado)
                 elif max_criteria == 6:
+                    letrados_que_cumplen.append(letrado)
+            elif Conocimiento_de_proposicion.cond_rep_juzgado_mes(preferencias,sig_bloque, letrado):
+                if max_criteria < 7:
+                    max_criteria = 7
+                    letrados_que_cumplen = []
+                    letrados_que_cumplen.append(letrado)
+                elif max_criteria == 7:
+                    letrados_que_cumplen.append(letrado)
+            else:
+                if max_criteria < 8:
+                    max_criteria = 8
+                    letrados_que_cumplen = []
+                    letrados_que_cumplen.append(letrado)
+                elif max_criteria == 8:
                     letrados_que_cumplen.append(letrado)
         return max_criteria, letrados_que_cumplen
     
@@ -147,7 +161,7 @@ class Conocimiento_de_proposicion():
         return b_asignados_dia_ant != [] or b_asignados_dia_sig != []
     
     def cond_rep_juzgado_fuera(diseño, sig_bloque, letrado):
-        if is_bloque_fuera(sig_bloque):
+        if is_bloque_fuera(sig_bloque) and sig_bloque.juzgado[0] == "F":
             bloques_fuera = get_bloques_fuera(diseño)
             bloques_fuera = list(filter(lambda bloque: (bloque.juzgado[0] == "F"), bloques_fuera))
             bloques_fuera_asign = list(filter(lambda bloque: (bloque.asignado_a == letrado), bloques_fuera))
@@ -167,13 +181,29 @@ class Conocimiento_de_proposicion():
         target_juzgado = sig_bloque.juzgado
         b_asignados_juzgado = list(filter(lambda bloque: (bloque.juzgado == target_juzgado) and bloque.asignado_a == letrado, diseño))
         return b_asignados_juzgado != []
+    
+    def cond_rep_juzgado_fuera_mes(sig_bloque, letrado, preferencias):
+        
+        if sig_bloque.juzgado[0] == "F":
+            bloques_fuera = list(filter(lambda pref: (pref.juzgado[0] == "F"), preferencias))
+            bloques_fuera_asign = list(filter(lambda pref: (pref.letrado == letrado.nombre) and (pref.juzgado == sig_bloque.juzgado), bloques_fuera))
+            return bloques_fuera_asign != []
+
+        else:
+            
+            return False                                                          #si se repite un juzgado de un mes a otro
+        
+    def cond_rep_juzgado_mes(preferencias, sig_bloque, letrado):
+        target_juzgado = sig_bloque.juzgado
+        b_asignados_juzgado = list(filter(lambda pref: (pref.juzgado == target_juzgado) and pref.letrado == letrado.nombre, preferencias))
+        return b_asignados_juzgado != []
 #######################################################################################################
 
     #elige de entre los letrados que cumplen los mismo criterios según heurísticas
     def elegir_letrado(max_criteria, list_letrados, diseño, cuotas, bloque): 
         
         if len(list_letrados)>1:            
-#######################################################################
+
             if not is_bloque_fuera(bloque):            
                 
                 list_letrados = Conocimiento_de_proposicion.get_letrados_con_menos_juicios(list_letrados, diseño)
@@ -322,7 +352,7 @@ class Conocimiento_de_proposicion():
     
     def get_letrados_con_mas_separacion(list_letrados, diseño, bloque):           #letrados que tengan más días de margen entre el bloque y el más cercano en cuanto fecha
         margen_max = 0
-        list_margen_letrados = list_letrados
+        list_margen_letrados = list_letrados.copy()
         
         for letrado in list_letrados:
             list_b_let_semana = get_bloques_asignados_semana(bloque, letrado, diseño)
@@ -335,11 +365,12 @@ class Conocimiento_de_proposicion():
                     list_margenes.append(diferencia_dias)
                 
                 min_margen = min(list_margenes)
-                if min_margen > margen_max:
-                    margen_max = min_margen
-                    list_margen_letrados = []
-                    list_margen_letrados.append(letrado)
-                elif min_margen == margen_max:
-                    list_margen_letrados.append(letrado)
+                if min_margen != 0:
+                    if min_margen > margen_max:
+                        margen_max = min_margen
+                        list_margen_letrados = []
+                        list_margen_letrados.append(letrado)
+                    elif min_margen == margen_max:
+                        list_margen_letrados.append(letrado)
         
         return list_margen_letrados

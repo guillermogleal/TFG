@@ -1,5 +1,6 @@
 from Passer_from_excel import obtenerBloques
 from passer_letrados import introducir_letrados_y_disp
+from passer_reparto import *
 from requisitos import Requisitos
 from configuracion import Configuracion
 from servicio_BD import *
@@ -51,19 +52,32 @@ def print_diseño(diseño, letrados, dias_mes):
     print(list_n_juicios_letrado)
 
 
-
+####################################################################
 
 
 bloques = obtenerBloques()
 letrados, restricciones = introducir_letrados_y_disp()
 
-bloques_BD = Servicio_BD.consultar_BD
+meter_reparto_manual = True
+
+if meter_reparto_manual:
+    Servicio_BD.eliminar_reparto_BD()
+
+    reparto_BD = obtener_reparto_de_excel('C:/Users/gonza/Desktop/uni/TFG/junio/Reparto JUNIO 2024.xlsx')
+
+    Servicio_BD.añadir_reparto_BD(reparto_BD)
+
+bloques_BD = Servicio_BD.consultar_BD()
 
 requisitos = Requisitos(bloques, letrados, restricciones, bloques_BD)
 
 obj_conf = Configuracion(requisitos, letrados)
 
 diseño = obj_conf.execute()
+
+Servicio_BD.eliminar_reparto_BD()
+Servicio_BD.añadir_reparto_BD(diseño)
+Servicio_BD.consultar_BD()
 
 print_diseño(diseño, letrados, 30)
 

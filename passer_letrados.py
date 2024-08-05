@@ -30,7 +30,7 @@ def introducir_letrados_y_disp():
     lista_restricciones.append(disp4)
 
 
-    letrado5 = Letrado("MARIA BELEN GUERRA PAZ", False)
+    letrado5 = Letrado("MARIA BELEN GUERRA DIAZ", False)
     lista_letrados.append(letrado5)
     disp5 = DISPONIBILIDAD(letrado5, [datetime(2024, 9, 2), datetime(2024, 9, 5), datetime(2024, 9, 9)], False)
     lista_restricciones.append(disp5)
