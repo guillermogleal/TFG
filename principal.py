@@ -4,6 +4,7 @@ from passer_reparto import *
 from requisitos import Requisitos
 from configuracion import Configuracion
 from servicio_BD import *
+from productTable import main
 
 def print_diseño(diseño, letrados, dias_mes):
     i = 0
@@ -80,5 +81,7 @@ Servicio_BD.añadir_reparto_BD(diseño)
 Servicio_BD.consultar_BD()
 
 print_diseño(diseño, letrados, 30)
+
+main(diseño, letrados)                #el main de productTable
 
 print("llega al final")

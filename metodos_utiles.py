@@ -1,5 +1,6 @@
 from datetime import datetime
 from restriccion import *
+import calendar
 
 def obtener_campo_aux(str, i):
     campo = ""
@@ -142,3 +143,11 @@ def get_bloques_asignados_semana(bloque, letrado, diseño):
                 list_bloques.append(bloque_dis)
 
     return list_bloques
+
+def semanas_totales_en_mes(anio, mes):
+    # Obtener el primer día del mes (0=Lunes, 1=Martes, ..., 6=Domingo)
+    primer_dia_semana, dias_mes = calendar.monthrange(anio, mes)
+    
+    # Calcular el número de semanas que cubren el mes
+    semanas_totales = (dias_mes + primer_dia_semana + 6) // 7
+    return semanas_totales, primer_dia_semana, dias_mes
