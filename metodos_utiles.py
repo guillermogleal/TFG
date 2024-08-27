@@ -38,7 +38,7 @@ def get_nombres_restriccion(list_restricciones):
 
 def get_bajas(list_restricciones, letrado):
     i = 0 
-    while i < len(list_restricciones) and not isinstance(list_restricciones[i], DISPONIBILIDAD) and list_restricciones[i].letrado != letrado:
+    while i < len(list_restricciones) and not isinstance(list_restricciones[i], DISPONIBILIDAD) and list_restricciones[i].letrado != letrado and list_restricciones[i].parcial:
         i = i + 1
     return list_restricciones[i].dias_de_baja
 

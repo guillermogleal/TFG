@@ -1,4 +1,5 @@
 from bloque_BD import *
+from letrado_BD import *
 
 class Conexion_BD:
 
@@ -16,6 +17,10 @@ class Conexion_BD:
     
     def eliminar_BD():
         Base.metadata.tables['bloque_BD'].drop(Conexion_BD.engine, checkfirst= True)
+    
+    def eliminar_BD_letrados():
+        Base.metadata.tables['letrado_BD'].drop(Conexion_BD.engine, checkfirst= True)
+
     
     def obtener_sesion():
         Conexion_BD.inicializar('base_de_datos')

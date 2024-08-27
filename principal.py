@@ -4,7 +4,7 @@ from passer_reparto import *
 from requisitos import Requisitos
 from configuracion import Configuracion
 from servicio_BD import *
-from productTable import main
+from productTable import main_product_table
 
 def print_diseño(diseño, letrados, dias_mes):
     i = 0
@@ -82,6 +82,6 @@ Servicio_BD.consultar_BD()
 
 print_diseño(diseño, letrados, 30)
 
-main(diseño, letrados)                #el main de productTable
+main_product_table(diseño, letrados)                #el main de productTable
 
 print("llega al final")

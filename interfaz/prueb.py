@@ -1,27 +1,59 @@
 import tkinter as tk
 
-def agregar_item():
-    """Función para agregar un ítem al Listbox desde el Entry."""
-    item = entrada.get()
-    if item:  # Verifica que el Entry no esté vacío
-        listbox.insert(tk.END, item)  # Añade el ítem al final del Listbox
-        entrada.delete(0, tk.END)  # Limpia el Entry después de agregar el ítem
+class Controlador:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Ventana Principal")
+        self.ventana_actual = None
+        self.mostrar_ventana_principal()
 
-# Crear la ventana principal
-root = tk.Tk()
-root.title("Agregar Ítems al Listbox")
+    def mostrar_ventana_principal(self):
+        # Si ya hay una ventana abierta, la destruimos
+        if self.ventana_actual:
+            self.ventana_actual.destroy()
 
-# Crear un widget Entry para ingresar texto
-entrada = tk.Entry(root, width=50)
-entrada.pack(pady=10)
+        # Crear la ventana principal
+        self.ventana_actual = VentanaPrincipal(self)
 
-# Crear un widget Listbox para mostrar los ítems
-listbox = tk.Listbox(root, width=50, height=10)
-listbox.pack(pady=10)
+    def mostrar_ventana_secundaria(self, argumento):
+        if self.ventana_actual is not None:
+            self.ventana_actual.destroy()
 
-# Crear un botón para agregar el texto del Entry al Listbox
-boton = tk.Button(root, text="Agregar Ítem", command=agregar_item)
-boton.pack(pady=10)
+        self.ventana_actual = VentanaSecundaria(self, argumento)
+        self.ventana_actual.pack(fill="both", expand=True)
+    def iniciar(self):
+        self.root.mainloop()
 
-# Iniciar el bucle principal de la interfaz
-root.mainloop()
+#### 2. **Ventana Principal (`VentanaPrincipal`)**
+
+class VentanaPrincipal(tk.Frame):
+    def __init__(self, controlador):
+        super().__init__(controlador.root)
+        self.controlador = controlador
+        self.pack()
+
+        label = tk.Label(self, text="Esta es la Ventana Principal")
+        label.pack(pady=20)
+
+        boton = tk.Button(self, text="Ir a la Ventana Secundaria", command=lambda: self.controlador.mostrar_ventana_secundaria("¡Hola!"))
+        boton.pack()
+
+#### 3. **Ventana Secundaria (`VentanaSecundaria`)**
+
+class VentanaSecundaria(tk.Frame):
+    def __init__(self, controlador, argumento):
+        super().__init__(controlador.root)
+        self.controlador = controlador
+
+        label = tk.Label(self, text=f"Ventana Secundaria - Recibido: {argumento}")
+        label.pack(pady=20)
+
+        boton = tk.Button(self, text="Volver a la Ventana Principal", command=self.controlador.mostrar_ventana_principal)
+        boton.pack()
+
+#### 4. **Ejecución de la Aplicación**
+
+
+if __name__ == "__main__":
+    app = Controlador()
+    app.iniciar()

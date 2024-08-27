@@ -4,9 +4,13 @@ from metodos_utiles import semanas_totales_en_mes
 from datetime import datetime
 
 
-class ProductTable(tk.Tk):
-    def __init__(self, products, **kwargs):
-        super().__init__(**kwargs)
+class ProductTable(tk.Frame):
+    def __init__(self, controlador, products, **kwargs):
+        super().__init__(controlador.root,**kwargs)
+        
+        self.controlador = controlador
+        self.pack(fill="both", expand=True)
+
         self.products = products
         self.tree = ttk.Treeview(self, columns=("Letrado", "Lunes", "cant0.", "Martes", "cant1.", "Miércoles", "cant2.", "Jueves", "cant3.", "Viernes", "cant4.", "Sábado", "cant5.", "Domingo", "Total sem."), show="headings")
         self.tree.heading("Letrado", text="Letrado")
@@ -42,11 +46,85 @@ class ProductTable(tk.Tk):
         self.tree.column("Domingo", width=50, anchor= "center")
         self.tree.column("Total sem.", width=30, anchor= "center")
 
+        self.tree.bind("<Double-1>", lambda event: self.onDoubleClick(event))
+
+        self.tree.tag_configure("highlight", background="lightblue")
 
         # Insert sample data into the Treeview
         for product in self.products:
-            self.tree.insert("", "end", values=product)
+            if product[0] == "":
+                self.tree.insert("", "end", values=product, tags=("highlight",))
+            else:
+                self.tree.insert("", "end", values=product)
         self.tree.pack(fill="both", expand=True)
+
+    def onDoubleClick(self, event):
+            '''Executed, when a row is double-clicked'''
+            # close previous popups
+            try:  # in case there was no previous popup
+                self.entryPopup.destroy()
+            except AttributeError:
+                pass
+
+            # what row and column was clicked on
+            rowid = self.tree.identify_row(event.y)
+            column = self.tree.identify_column(event.x)
+
+            # return if the header was double clicked
+            if not rowid:
+                return
+
+            # get cell position and cell dimensions
+            x, y, width, height = self.tree.bbox(rowid, column)
+            
+
+            # y-axis offset
+            pady = height // 2
+
+            # place Entry Widget
+            text = self.tree.item(rowid, 'values')[int(column[1:])-1]
+            self.entryPopup = EntryPopup(self, rowid, int(column[1:])-1, text)
+            self.entryPopup.place(x=x, y=y+pady, width=width, height=height, anchor='w')
+    
+    def get_column(self, column_name):
+        column_values = []
+        for id in self.tree.get_children():
+            column_values.append(self.tree.item(id, "values")[self.tree["columns"].index(column_name)])
+        return column_values
+    
+    def get_row(self, row_index):
+        print("get_children return value: ", self.tree.get_children())
+        return self.tree.item(self.tree.get_children()[row_index], "values")
+
+class EntryPopup(ttk.Entry):
+    def __init__(self, parent, iid, column, text, **kw):
+        super().__init__(parent, **kw)
+        self.tv = parent.tree  # reference to parent window's treeview
+        self.iid = iid  # row id
+        self.column = column 
+
+        self.insert(0, text) 
+        self['exportselection'] = False  # Prevents selected text from being copied to  
+                                         # clipboard when widget loses focus
+        self.focus_force()  # Set focus to the Entry widget
+        self.select_all()   # Highlight all text within the entry widget
+        self.bind("<Return>", self.on_return) # Enter key bind
+        self.bind("<Control-a>", self.select_all) # CTRL + A key bind
+        self.bind("<Escape>", lambda *ignore: self.destroy()) # ESC key bind
+        
+    def on_return(self, event):
+        '''Insert text into treeview, and delete the entry popup'''
+        rowid = self.tv.focus()  # Find row id of the cell which was clicked
+        vals = self.tv.item(rowid, 'values')  # Returns a tuple of all values from the row with id, "rowid"
+        vals = list(vals)  # Convert the values to a list so it becomes mutable
+        vals[self.column] = self.get()  # Update values with the new text from the entry widget
+        self.tv.item(rowid, values=vals)  # Update the Treeview cell with updated row values
+        self.destroy()  # Destroy the Entry Widget
+        
+    def select_all(self, *ignore):
+        ''' Set selection on the whole text '''
+        self.selection_range(0, 'end')
+        return 'break'
 
 
 def hacer_fila_de_semana(semana, primer_dia, n_columnas, ultimo_dia_registrado, ultimo_dia_mes):
@@ -108,24 +186,12 @@ def hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes):
                 if len(fila_letrado)<= n_columna:
                     fila_letrado.append("")
     return fila_letrado
-                
-
-
-        
-
-        
-    
-
-
-
-def main(diseño, letrados):
+                    
+def main_product_table(diseño, letrados, mes, año):
     filas = []
-    
-    bloque = diseño[0]                   #se obtiene un bloque cualquiera para conseguir una fecha y conocer el mes y año
-    fecha = bloque.fecha
 
     ultimo_dia_registrado = 0
-    n_semanas, primer_dia, dias_mes = semanas_totales_en_mes(fecha.year, fecha.month)
+    n_semanas, primer_dia, dias_mes = semanas_totales_en_mes(año, mes)
     n_letrados = len(letrados)
 
     n_filas = (n_letrados + 1) * n_semanas
@@ -136,12 +202,11 @@ def main(diseño, letrados):
         filas.append(tuple(fila_semana))
 
         for letrado in letrados:
-            fila_letrado = hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, fecha.year, fecha.month)
+            fila_letrado = hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes)
             filas.append(tuple(fila_letrado))
 
-
-    app = ProductTable(filas)
-    app.mainloop()   
+    return filas
+      
 
 """    products = [
             ("1001", "Product A", "Category 1", "$10.99"),
