@@ -13,6 +13,8 @@ from restriccion import *
 from metodos_utiles import str_to_datetime
 from datetime import datetime
 from productTable import main_product_table
+from bloque import Bloque
+from principal import iniciar_modelo
 
 
 
@@ -143,6 +145,50 @@ class Controlador():
             self.ventanaActual = productTable.ProductTable(self, self.filas)
         else:
             messagebox.showwarning("Advertencia", "El mes o año introducidos no son válidos.")
+        
+    def productTable_pre_but_siguiente(self, tree):
+        list_bloques_directos = []
+
+        id_fila_semana = ""
+        filas = tree.get_children()
+
+        # Recorrer los elementos y obtener los datos
+        for n_fila in filas:
+            fila = tree.item(n_fila, "values")
+            if fila[0] != "":
+                cont_colum = 1
+                while cont_colum < len(fila):
+                    if fila[cont_colum] != "":
+                        cantidad = int(fila[cont_colum+1])
+                        valores_fila = tree.item(id_fila_semana, "values")
+                        dia = int(valores_fila[cont_colum])
+                        bloque = Bloque(cantidad, datetime(self.año, self.mes, dia), fila[cont_colum], [])
+                        letrado = list(filter(lambda letrado: (fila[0] == letrado.nombre) , self.plantilla))[0]
+                        bloque.asignado_a = letrado
+
+                        list_bloques_directos.append(bloque)
+
+                    cont_colum+=2
+            else:
+                id_fila_semana = n_fila
+                
+        
+        diseño = iniciar_modelo(self.ruta, self.plantilla, self.restricciones, list_bloques_directos)
+
+        self.filas = main_product_table(diseño, self.plantilla, self.mes, self.año)
+
+        if self.ventanaActual:
+            self.ventanaActual.destroy()
+            
+        self.ventanaActual = productTable.ProductTable(self, self.filas)
+
+
+        #Servicio_BD.eliminar_reparto_BD()
+        #Servicio_BD.añadir_reparto_BD(diseño)
+        #Servicio_BD.consultar_BD()
+
+
+               
         
      
 

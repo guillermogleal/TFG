@@ -151,3 +151,15 @@ def semanas_totales_en_mes(anio, mes):
     # Calcular el número de semanas que cubren el mes
     semanas_totales = (dias_mes + primer_dia_semana + 6) // 7
     return semanas_totales, primer_dia_semana, dias_mes
+
+def eliminar_dupli_directos(bloques, list_bloques_directos):
+    bloquesBucle = bloques.copy()
+
+    for bloque in bloquesBucle:
+        duplicados = list(filter(lambda bloque_dir: (bloque.juzgado == bloque_dir.juzgado and bloque.cantidad == bloque_dir.cantidad and bloque.fecha == bloque_dir.fecha) , list_bloques_directos))    
+        if len(duplicados) == 1:
+            if bloque.partido != 1:
+                bloques.remove(bloque)
+        elif len(duplicados) == 2:
+            bloques.remove(bloque)
+    return bloques

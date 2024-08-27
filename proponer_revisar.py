@@ -2,7 +2,7 @@ from especificar import *
 from operacionalizar import *
 from proponer import *
 from verificar import *
-from metodos_utiles import get_bajas, get_tipo_restricciones
+from metodos_utiles import get_bajas, get_tipo_restricciones, eliminar_dupli_directos
 from modificar import *
 
 class Proponer_revisar():
@@ -13,11 +13,12 @@ class Proponer_revisar():
 
 
         requisitos.list_bloques.sort(key= lambda bloque: bloque.cantidad, reverse= True)
-
-
-        diseño_esqueletal = Especificar.metodo(requisitos)
-        
         restricciones, preferencias = Operacionalizar.metodo(requisitos)
+
+        requisitos.list_bloques = eliminar_dupli_directos(requisitos.list_bloques, requisitos.list_bloques_directos)
+        diseño_esqueletal = Especificar.metodo(requisitos) + requisitos.list_bloques_directos
+        diseño_esqueletal.sort(key= lambda bloque: bloque.cantidad, reverse= True)
+        
         restricciones = restricciones + requisitos.list_restricciones
        
         cuotas = get_tipo_restricciones(restricciones, MAX_CUOTA)

@@ -58,6 +58,9 @@ class ProductTable(tk.Frame):
                 self.tree.insert("", "end", values=product)
         self.tree.pack(fill="both", expand=True)
 
+        self.botonNext = tk.Button(self, text="Siguiente", command= lambda: self.controlador.productTable_pre_but_siguiente(self.tree))
+        self.botonNext.pack(side= "right", padx= 5)
+
     def onDoubleClick(self, event):
             '''Executed, when a row is double-clicked'''
             # close previous popups

@@ -53,35 +53,40 @@ def print_diseño(diseño, letrados, dias_mes):
     print(list_n_juicios_letrado)
 
 
+
+
 ####################################################################
 
+def iniciar_modelo(ruta_listado, plantilla, disponibilidades, list_bloques_directos):
 
-bloques = obtenerBloques()
-letrados, restricciones = introducir_letrados_y_disp()
+    bloques = obtenerBloques(ruta_listado)
+    letrados = plantilla
+    restricciones = disponibilidades
+#    meter_reparto_manual = True
 
-meter_reparto_manual = True
+#    if meter_reparto_manual:
+#        Servicio_BD.eliminar_reparto_BD()
 
-if meter_reparto_manual:
-    Servicio_BD.eliminar_reparto_BD()
+#        reparto_BD = obtener_reparto_de_excel('C:/Users/gonza/Desktop/uni/TFG/junio/Reparto JUNIO 2024.xlsx')
 
-    reparto_BD = obtener_reparto_de_excel('C:/Users/gonza/Desktop/uni/TFG/junio/Reparto JUNIO 2024.xlsx')
+#        Servicio_BD.añadir_reparto_BD(reparto_BD)
 
-    Servicio_BD.añadir_reparto_BD(reparto_BD)
+    bloques_BD = Servicio_BD.consultar_BD()[0]
 
-bloques_BD = Servicio_BD.consultar_BD()
+    requisitos = Requisitos(bloques, letrados, restricciones, bloques_BD, list_bloques_directos)
 
-requisitos = Requisitos(bloques, letrados, restricciones, bloques_BD)
+    obj_conf = Configuracion(requisitos, letrados)
 
-obj_conf = Configuracion(requisitos, letrados)
+    diseño = obj_conf.execute()
 
-diseño = obj_conf.execute()
 
-Servicio_BD.eliminar_reparto_BD()
-Servicio_BD.añadir_reparto_BD(diseño)
-Servicio_BD.consultar_BD()
 
-print_diseño(diseño, letrados, 30)
+    
 
-main_product_table(diseño, letrados)                #el main de productTable
+    print_diseño(diseño, letrados, 30)
 
-print("llega al final")
+#    main_product_table(diseño, letrados)                #el main de productTable
+
+    print("llega al final")
+
+    return diseño

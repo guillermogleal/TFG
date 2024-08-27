@@ -86,11 +86,11 @@ def identificar_juzgado(juzgado, lev):
 def crearBloque(fecha_act, juzgado_act, num_juicios, list_juicios):
     return Bloque(num_juicios, fecha_act, juzgado_act, list_juicios)
 
-def obtenerBloques():
+def obtenerBloques(ruta):
     #instancias
     lev=Levenshtein()
     # Ruta al archivo Excel
-    ruta_archivo = 'C:/Users/gonza/Desktop/uni/TFG/septiembre/Listado juicio SEPTIEMBRE.xlsx'
+    ruta_archivo = ruta
 
     # Leer el archivo Excel en un DataFrame de pandas
     datos_excel = pd.read_excel(ruta_archivo)
@@ -127,8 +127,28 @@ def obtenerBloques():
                         print("   ",end="")
                         print(letrados_con_juicios, end="")
                         print(n_juicios)
-                        bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, num_juicios, list_juicios)
-                        list_bloques.append(bloque)
+                        if num_juicios < 14:
+                            bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, num_juicios, list_juicios)
+                            list_bloques.append(bloque)
+                        else:
+                            if num_juicios % 2 == 0:
+                                media_juicios = int(num_juicios / 2)
+                                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios, list_juicios[:media_juicios])
+                                bloque.partido = 1
+                                list_bloques.append(bloque)
+                                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios, list_juicios[-media_juicios:])
+                                bloque.partido = 2
+                                list_bloques.append(bloque)
+                            else:
+                                media_juicios = int(num_juicios / 2)
+                                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios+1, list_juicios[:media_juicios+1])
+                                bloque.partido = 0
+                                list_bloques.append(bloque)
+                                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios, list_juicios[-media_juicios:])
+                                bloque.partido = 0
+                                list_bloques.append(bloque)
+                                
+
 
                     juzgado_act = juzgado
                     print(juzgado_act+"|", end='')
@@ -162,8 +182,28 @@ def obtenerBloques():
         print("   ", end='')
         print(letrados_con_juicios,end="")
         print(n_juicios)
-        bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, num_juicios, list_juicios)
-        list_bloques.append(bloque)
+        
+        if num_juicios < 14:       
+            bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, num_juicios, list_juicios)
+            list_bloques.append(bloque)
+        else:
+            if num_juicios % 2 == 0:
+                media_juicios = int(num_juicios / 2)
+                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios, list_juicios[:media_juicios])
+                bloque.partido = 1
+                list_bloques.append(bloque)
+                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios, list_juicios[-media_juicios:])
+                bloque.partido = 2
+                list_bloques.append(bloque)
+            else:
+                media_juicios = int(num_juicios / 2)
+                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios+1, list_juicios[:media_juicios+1])
+                bloque.partido = 0
+                list_bloques.append(bloque)
+                bloque = crearBloque(str_to_datetime(fecha_act), juzgado_act, media_juicios, list_juicios[-media_juicios:])
+                bloque.partido = 0
+                list_bloques.append(bloque)
+
         juzgado_act = ''
         fecha_act = celda_act
         num_juicios_total = num_juicios_total + num_juicios
