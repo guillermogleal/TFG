@@ -5,6 +5,7 @@ class Configuracion():
         self.extensions = extensions
     
     def execute(self):
-        diseño = Proponer_revisar.execute(self.requisitos, self.extensions)
-        return diseño
+        diseño, bloques_sin_asignar, restricciones = Proponer_revisar.execute(self.requisitos, self.extensions)
+        return diseño, bloques_sin_asignar, restricciones
+    
         

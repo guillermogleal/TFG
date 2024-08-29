@@ -4,6 +4,8 @@ from letrado_BD import *
 from datetime import datetime
 from letrado import Letrado
 
+from passer_reparto import obtener_reparto_de_excel
+
 class Servicio_BD:
 
     def conexion_BD():
@@ -235,10 +237,15 @@ def introducir_letrados_y_disp():
 list_letrados = introducir_letrados_y_disp()
 
 Servicio_BD.añadir_plantilla(list_letrados)
+"""
+list_bloques_BD = obtener_reparto_de_excel("C:/Users/gonza/Desktop/uni/TFG/septiembre/Reparto SEPTIEMBRE 2024.xlsx")
+
+Servicio_BD.eliminar_reparto_BD()
+
+Servicio_BD.añadir_reparto_BD(list_bloques_BD)
 
 BD_reparto, BD_plantilla =Servicio_BD.consultar_BD()
 
 llega = True
 
 
-"""

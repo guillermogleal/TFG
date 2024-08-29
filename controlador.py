@@ -15,6 +15,7 @@ from datetime import datetime
 from productTable import main_product_table
 from bloque import Bloque
 from principal import iniciar_modelo
+from conocimiento_de_verificacion import Conocimiento_de_verificacion
 
 
 
@@ -137,23 +138,74 @@ class Controlador():
         self.año = año
 
         if controlador.es_fecha_valida(año, mes):
-            self.filas = main_product_table([], self.plantilla, self.mes, self.año)
+            self.filas = main_product_table([], self.plantilla, self.mes, self.año, self.restricciones)
 
             if self.ventanaActual:
                 self.ventanaActual.destroy()
                 
-            self.ventanaActual = productTable.ProductTable(self, self.filas)
+            self.ventanaActual = productTable.ProductTable(self, self.filas, True)
         else:
             messagebox.showwarning("Advertencia", "El mes o año introducidos no son válidos.")
         
     def productTable_pre_but_siguiente(self, tree):
+        
+        list_bloques_directos = controlador.obtener_bloques_de_productTable(tree)     
+        
+        diseño, bloques_sin_asignar, restricciones = iniciar_modelo(self.ruta, self.plantilla, self.restricciones, list_bloques_directos)
+
+        self.restricciones = restricciones
+
+        self.filas = main_product_table(diseño, self.plantilla, self.mes, self.año, self.restricciones)
+
+        if bloques_sin_asignar != []:
+            str_bloques_sin_asig = ''
+
+            for bloque in bloques_sin_asignar:
+                str_bloques_sin_asig = str_bloques_sin_asig + "Día: " +str(bloque.fecha.day) + ", " + bloque.juzgado + '|' + str(bloque.cantidad) + '\n'
+            
+            messagebox.showwarning("Advertencia", "No se encontró una asignación válida para los siguientes bloques:\n" + str_bloques_sin_asig + 'Apúntelos para asignarlos en la siguiente ventana.')
+
+        if self.ventanaActual:
+            self.ventanaActual.destroy()
+            
+        self.ventanaActual = productTable.ProductTable(self, self.filas, False)
+
+
+        #Servicio_BD.eliminar_reparto_BD()
+        #Servicio_BD.añadir_reparto_BD(diseño)
+        #Servicio_BD.consultar_BD()
+    
+    def productTable_pos_but_siguiente(self, tree):
+        print("")
+
+    def productTable_pos_but_aplicar(self, tree):
+        list_bloques = controlador.obtener_bloques_de_productTable(tree)
+        bloques_mal = []
+        str_bloques_mal = ''
+        for bloque in list_bloques:
+            incumple = Conocimiento_de_verificacion.check_criteria(bloque, self.restricciones, list_bloques)
+            if incumple:
+                bloques_mal.append(bloque)
+        if bloques_mal != []:
+            for bloque in bloques_mal:
+                str_bloques_mal = str_bloques_mal + "Día: " +str(bloque.fecha.day) + ", " + bloque.juzgado + '|' + str(bloque.cantidad) +", "+ bloque.asignado_a.nombre +'\n'
+            messagebox.showwarning("Advertencia", "Los siguientes bloques incumplen alguno(s) de los criterios obligatorios\n (cuota max., cuota max. fuera, fecha disponible, max. dias semanales, max. dias semanales fuera, max. juicios semanales):\n" + str_bloques_mal)
+        else:
+            messagebox.showwarning("Mensaje", "No se detectaron asignaciones no válidas.\n" + str_bloques_mal)
+
+        
+
+    def obtener_bloques_de_productTable(self, tree):
         list_bloques_directos = []
 
         id_fila_semana = ""
         filas = tree.get_children()
 
+        nletrados = len(self.plantilla)
+        nUltimasFilas = 3 + nletrados
+
         # Recorrer los elementos y obtener los datos
-        for n_fila in filas:
+        for n_fila in filas[:-nUltimasFilas]:
             fila = tree.item(n_fila, "values")
             if fila[0] != "":
                 cont_colum = 1
@@ -170,25 +222,9 @@ class Controlador():
 
                     cont_colum+=2
             else:
-                id_fila_semana = n_fila
-                
-        
-        diseño = iniciar_modelo(self.ruta, self.plantilla, self.restricciones, list_bloques_directos)
+                id_fila_semana = n_fila    
 
-        self.filas = main_product_table(diseño, self.plantilla, self.mes, self.año)
-
-        if self.ventanaActual:
-            self.ventanaActual.destroy()
-            
-        self.ventanaActual = productTable.ProductTable(self, self.filas)
-
-
-        #Servicio_BD.eliminar_reparto_BD()
-        #Servicio_BD.añadir_reparto_BD(diseño)
-        #Servicio_BD.consultar_BD()
-
-
-               
+        return list_bloques_directos 
         
      
 

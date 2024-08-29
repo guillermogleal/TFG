@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 from metodos_utiles import semanas_totales_en_mes
 from datetime import datetime
+from restriccion import MAX_CUOTA, MAX_CUOTA_FUERA
 
 
 class ProductTable(tk.Frame):
-    def __init__(self, controlador, products, **kwargs):
+    def __init__(self, controlador, products, pre,**kwargs):
         super().__init__(controlador.root,**kwargs)
         
         self.controlador = controlador
@@ -57,9 +58,15 @@ class ProductTable(tk.Frame):
             else:
                 self.tree.insert("", "end", values=product)
         self.tree.pack(fill="both", expand=True)
+        if pre :
+            self.botonNext = tk.Button(self, text="Siguiente", command= lambda: self.controlador.productTable_pre_but_siguiente(self.tree))
+            self.botonNext.pack(side= "right", padx= 5)
+        else:
+            self.botonAplicar = tk.Button(self, text="Aplicar cambios", command= lambda: self.controlador.productTable_pos_but_aplicar(self.tree))
+            self.botonAplicar.pack(side= "right", padx= 5)
 
-        self.botonNext = tk.Button(self, text="Siguiente", command= lambda: self.controlador.productTable_pre_but_siguiente(self.tree))
-        self.botonNext.pack(side= "right", padx= 5)
+            self.botonNext = tk.Button(self, text="Siguiente", command= lambda: self.controlador.productTable_pos_but_siguiente(self.tree))
+            self.botonNext.pack(side= "right", padx= 5)
 
     def onDoubleClick(self, event):
             '''Executed, when a row is double-clicked'''
@@ -116,12 +123,60 @@ class EntryPopup(ttk.Entry):
         self.bind("<Escape>", lambda *ignore: self.destroy()) # ESC key bind
         
     def on_return(self, event):
+        total_semanal = 0
+        contColumn = 2
+        total_semanal_pre =0
+
         '''Insert text into treeview, and delete the entry popup'''
         rowid = self.tv.focus()  # Find row id of the cell which was clicked
         vals = self.tv.item(rowid, 'values')  # Returns a tuple of all values from the row with id, "rowid"
         vals = list(vals)  # Convert the values to a list so it becomes mutable
         vals[self.column] = self.get()  # Update values with the new text from the entry widget
+        
+        total_semanal_pre = int(vals[14])
+
+        while contColumn < 14:
+            
+            if vals[contColumn] != "":
+                total_semanal+= int(vals[contColumn])
+            contColumn += 2 
+        vals[14] = total_semanal
+
+        diff_total_semanal = total_semanal - total_semanal_pre
+        nombre = vals[0]
+        
         self.tv.item(rowid, values=vals)  # Update the Treeview cell with updated row values
+
+        filas = self.tv.get_children()
+        n_filas = len(filas)
+        contFilas = n_filas-1
+        contenFila = ""
+        
+
+#        while contenFila != "Nombre":
+#            contFilas -= 1
+#            contenFila = self.tv.item(filas[contFilas], "values")[0]
+
+#        n_filas_final = n_filas-contFilas
+
+        contFilas = n_filas-1
+
+        while contenFila != nombre:
+            contFilas-=1
+            contenFila = self.tv.item(filas[contFilas], "values")[0]
+
+        contenFila = self.tv.item(filas[contFilas], "values")
+        contenFila = list(contenFila)
+        contenFila[1] = int(contenFila[1]) + diff_total_semanal
+
+        self.tv.item(filas[contFilas], values= contenFila)
+
+        contenFila = self.tv.item(filas[n_filas-1], "values")
+        contenFila = list(contenFila)
+        contenFila[1] = int(contenFila[1]) + diff_total_semanal
+
+        self.tv.item(filas[n_filas-1], values= contenFila)
+
         self.destroy()  # Destroy the Entry Widget
         
     def select_all(self, *ignore):
@@ -189,8 +244,16 @@ def hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes):
                 if len(fila_letrado)<= n_columna:
                     fila_letrado.append("")
     return fila_letrado
-                    
-def main_product_table(diseño, letrados, mes, año):
+
+def obtenerTotalLetrado(letrado, filas):
+    totalLetrado=0
+    for fila in filas:
+        if fila[0] == letrado.nombre:
+            totalLetrado+= int(fila[14])
+    return totalLetrado
+
+
+def main_product_table(diseño, letrados, mes, año, restricciones):
     filas = []
 
     ultimo_dia_registrado = 0
@@ -207,6 +270,39 @@ def main_product_table(diseño, letrados, mes, año):
         for letrado in letrados:
             fila_letrado = hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes)
             filas.append(tuple(fila_letrado))
+
+    tupla_vacia = ("",) * n_columnas
+    filas.append(tupla_vacia)
+    list_vacia = [""] * (n_columnas-3)
+    list_fila_heads = ["Nombre", "Total", "Cuota"] + list_vacia
+    filas.append(tuple(list_fila_heads))
+
+    total = 0
+
+
+
+
+    for letrado in letrados:
+        list_fila = [""] * n_columnas
+        list_fila[0] = letrado.nombre
+        totalLetrado = obtenerTotalLetrado(letrado, filas)
+        list_fila[1] = totalLetrado
+        total += totalLetrado
+
+        cuota_letrado = list(filter(lambda restriccion: isinstance(restriccion, MAX_CUOTA) and restriccion.letrado == letrado, restricciones))
+        if len(cuota_letrado) == 1:
+            list_fila[2] = cuota_letrado[0].cuota
+
+        cuota_letrado_fuera = list(filter(lambda restriccion: isinstance(restriccion, MAX_CUOTA_FUERA) and restriccion.letrado == letrado, restricciones))
+        if len(cuota_letrado) == 1:
+            list_fila[3] = cuota_letrado_fuera[0].cuota
+
+        filas.append(tuple(list_fila))
+
+    list_vacia2 = [""] * n_columnas
+    list_vacia2[1] = total
+    filas.append(tuple(list_vacia2))
+
 
     return filas
       

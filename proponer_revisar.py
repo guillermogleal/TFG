@@ -46,8 +46,8 @@ class Proponer_revisar():
             
             extension, diseño = Proponer.metodo(extensions, preferencias, diseño_esqueletal, diseño, let_probados, cuotas, index_sig_bloque)
             
-            if extension!= None and extension.cantidad == 4 and extension.juzgado == "C2":
-                llego =True
+#            if extension!= None and extension.cantidad == 4 and extension.juzgado == "C2":
+#                llego =True
 
             if extension == -1:
                 print("no se pudo proponer más letrados")
@@ -70,4 +70,4 @@ class Proponer_revisar():
 
         #bucle de cambios de ser necesarios
         
-        return diseño
+        return diseño, bloques_sin_asig, restricciones

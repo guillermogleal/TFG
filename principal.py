@@ -77,7 +77,7 @@ def iniciar_modelo(ruta_listado, plantilla, disponibilidades, list_bloques_direc
 
     obj_conf = Configuracion(requisitos, letrados)
 
-    diseño = obj_conf.execute()
+    diseño, bloques_sin_asignar, restricciones = obj_conf.execute()
 
 
 
@@ -89,4 +89,4 @@ def iniciar_modelo(ruta_listado, plantilla, disponibilidades, list_bloques_direc
 
     print("llega al final")
 
-    return diseño
+    return diseño, bloques_sin_asignar, restricciones

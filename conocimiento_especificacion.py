@@ -3,7 +3,7 @@ from juicio import Juicio
 from metodos_utiles import *
 
 class Conocimiento_de_especificacion():
-    def regla_preparados(bloque : Bloque, list_letrados, list_restricciones):
+    def regla_preparados(bloque : Bloque, list_letrados, list_restricciones, list_bloques):
         fecha_datetime = bloque.fecha
         list_con_juicios = []
         list_cantidad = []
@@ -17,7 +17,14 @@ class Conocimiento_de_especificacion():
             
             preparado_por = juicio.preparado_por
             if juicio.demanda == "INSS":
-               bloque.asignado_a = get_letrado_por_nombre(preparado_por, list_letrados)
+               letrado = get_letrado_por_nombre(preparado_por, list_letrados)
+               bloques_asignados_ese_dia = list(filter(lambda bloque_lista: bloque.fecha == bloque_lista.fecha and letrado == bloque_lista.asignado_a, list_bloques))
+
+               bloque.asignado_a = letrado
+               if bloques_asignados_ese_dia != []:
+                   for bloque_asignado in bloques_asignados_ese_dia:
+                       bloque_asignado.asignado_a = None
+
                return bloque
       
 
@@ -44,7 +51,16 @@ class Conocimiento_de_especificacion():
                     if fecha_datetime in list_bajas:
                         asignable = False
                 if asignable:
-                    bloque.asignado_a = get_letrado_por_nombre(nombre_de_preparador, list_letrados)
+                    letrado = get_letrado_por_nombre(nombre_de_preparador, list_letrados)
+
+                    bloques_asignados_ese_dia = list(filter(lambda bloque_lista: bloque.fecha == bloque_lista.fecha and letrado == bloque_lista.asignado_a, list_bloques))                    
+                    
+                    if bloques_asignados_ese_dia != []:
+
+                        bloque.asignado_a = None
+                    else: 
+                    
+                        bloque.asignado_a = letrado
                     break
                 else:
                     asignable = True

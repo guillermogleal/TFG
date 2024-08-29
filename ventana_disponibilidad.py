@@ -20,13 +20,13 @@ class Ventana_disponibilidad(tk.Frame):
         self.message = tk.Message(self, text="Fecha de inicio de la baja:", width=350)
         self.message.pack(pady=5)
 
-        self.calendarioIn = DateEntry(self, width=12, background='darkblue', foreground='white', borderwidth=2, year=2024)
+        self.calendarioIn = DateEntry(self, width=12, background='darkblue', foreground='white', borderwidth=2, year=2024,  date_pattern='dd/MM/yyyy')
         self.calendarioIn.pack(pady=10)
 
         self.message = tk.Message(self, text="Fecha fin de la baja:", width=350)
         self.message.pack(pady=5)
 
-        self.calendarioFin = DateEntry(self, width=12, background='darkblue', foreground='white', borderwidth=2, year=2024)
+        self.calendarioFin = DateEntry(self, width=12, background='darkblue', foreground='white', borderwidth=2, year=2024,  date_pattern='dd/MM/yyyy')
         self.calendarioFin.pack(pady=10)
 
         self.parcial = tk.BooleanVar()

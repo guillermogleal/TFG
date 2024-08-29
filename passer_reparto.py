@@ -43,8 +43,37 @@ def obtener_primera_fila(datos_excel):
     
     return cont
 
+def traducir_letrado(mote_letrado):
+
+    if mote_letrado == "ANGEL":
+        letrado = "ANGEL GONZALEZ QUINTAS"
+    elif mote_letrado == "PEPA":
+        letrado = "MARIA JOSE GOYANES VIVIANI"
+    elif mote_letrado == "ANA":
+        letrado = "ANA MARIA PARDO COSTAS"
+    elif mote_letrado == "NATALIA":
+        letrado = "NATALIA SUAREZ HERVA"
+    elif mote_letrado == "BELEN":
+        letrado = "MARIA BELEN GUERRA DIAZ"
+    elif mote_letrado == "MARTA G":
+        letrado = "MARTA GARCIA LOPEZ"
+    elif mote_letrado == "Mª JESUS":
+        letrado = "MARIA JESUS LEDO MOURE"
+    elif mote_letrado == "FUENCISLA": 
+        letrado = "M. FUENCISLA SUAREZ BEREA"
+    elif mote_letrado == "CONCHITA":
+        letrado = "CONCEPCION NIETO ROIG"
+    elif mote_letrado == "MARTA":
+        letrado = "MARTA CALVO TRAVIESO"
+    else:
+        letrado = mote_letrado
+    return letrado
+
 def crear_bloque(cont_fila, cont_column, datos_excel, fila_con_dias, mes, año):
     letrado_asignado = datos_excel.iloc[cont_fila, 0]
+
+    letrado_asignado = traducir_letrado(letrado_asignado)
+
     fecha = datetime(año, mes, int(datos_excel.iloc[fila_con_dias, cont_column]))
     juzgado = datos_excel.iloc[cont_fila, cont_column]
     cantidad = datos_excel.iloc[cont_fila, cont_column + 1]
