@@ -64,7 +64,7 @@ def get_total_juicios(list_bloques):
     cont = 0
     
     for bloque in list_bloques:
-        cont = cont + len(bloque.lista_de_juicios)
+        cont = cont + bloque.cantidad
     
     return cont
 

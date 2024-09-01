@@ -210,14 +210,15 @@ class Conocimiento_de_proposicion():
                 if len(list_letrados) == 1:
                     return list_letrados[0]
                 
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_separacion(list_letrados, diseño, bloque)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
                 
                 list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_fuera(list_letrados, diseño)
                 if len(list_letrados) == 1:
                     return list_letrados[0]
                 
-                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_separacion(list_letrados, diseño, bloque)
-                if len(list_letrados) == 1:
-                    return list_letrados[0]
+                
                 
                 list_letrados =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(list_letrados, diseño, bloque)
                 if len(list_letrados) == 1:
@@ -234,14 +235,15 @@ class Conocimiento_de_proposicion():
                 if len(list_letrados) == 1:
                     return list_letrados[0]
                 
-                
+                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_separacion(list_letrados, diseño, bloque)
+                if len(list_letrados) == 1:
+                    return list_letrados[0]
+
                 list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_bloques_coru(list_letrados, diseño)
                 if len(list_letrados) == 1:
                     return list_letrados[0]
                 
-                list_letrados = Conocimiento_de_proposicion.get_letrados_con_mas_separacion(list_letrados, diseño, bloque)
-                if len(list_letrados) == 1:
-                    return list_letrados[0]
+                
                 
                 list_letrados =  Conocimiento_de_proposicion.get_letrados_con_menos_juicios_semana(list_letrados, diseño, bloque)
                 if len(list_letrados) == 1:
@@ -292,7 +294,7 @@ class Conocimiento_de_proposicion():
         return output_letrados
 
     def get_letrados_con_menos_juicios(list_letrados, diseño):
-        min_juicios = 50     #valor inicial arbitrario muy alto
+        min_juicios = 1000     #valor inicial arbitrario muy alto
         output_letrados = []
 
         for letrado in list_letrados:

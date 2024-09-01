@@ -66,7 +66,7 @@ class Conocimiento_de_verificacion():
         bloques_asignados_semana = get_bloques_asignados_semana(extension, extension.asignado_a, diseño)
         juicios_semana = get_total_juicios(bloques_asignados_semana)
 
-        return juicios_semana >= 20
+        return juicios_semana > 20
     
     def cond_max_cuota_fuera(extension, restricciones, diseño):
 

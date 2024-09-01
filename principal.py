@@ -83,7 +83,7 @@ def iniciar_modelo(ruta_listado, plantilla, disponibilidades, list_bloques_direc
 
     
 
-    print_diseño(diseño, letrados, 30)
+#    print_diseño(diseño, letrados, 30)
 
 #    main_product_table(diseño, letrados)                #el main de productTable
 
