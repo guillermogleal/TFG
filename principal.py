@@ -57,9 +57,9 @@ def print_diseño(diseño, letrados, dias_mes):
 
 ####################################################################
 
-def iniciar_modelo(ruta_listado, plantilla, disponibilidades, list_bloques_directos):
+def iniciar_modelo(bloques, plantilla, disponibilidades, list_bloques_directos):
 
-    bloques = obtenerBloques(ruta_listado)
+    
     letrados = plantilla
     restricciones = disponibilidades
 #    meter_reparto_manual = True

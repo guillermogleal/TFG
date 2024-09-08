@@ -15,6 +15,7 @@ from datetime import datetime
 from productTable import main_product_table
 from bloque import Bloque
 from principal import iniciar_modelo
+from Passer_from_excel import obtenerBloques
 from conocimiento_de_verificacion import Conocimiento_de_verificacion
 
 
@@ -31,15 +32,19 @@ class Controlador():
 
         self.ventanaActual = ventana_entrada.Ventana_Entrada(self)
         self.ruta = None
+        self.bloques = None
         self.plantilla = None                             #letrados para la tabla
         self.restricciones = None
         self.filas = None
+        self.index_filas_semana = None
         self.mes = None
         self.año = None
 
     def ventana_entrada_but_siguiente(self, ruta):
         if ruta != "":
             self.ruta = ruta
+
+            self.bloques = obtenerBloques(ruta)
             if self.ventanaActual:
                 self.ventanaActual.destroy()
             
@@ -138,7 +143,7 @@ class Controlador():
         self.año = año
 
         if controlador.es_fecha_valida(año, mes):
-            self.filas = main_product_table([], self.plantilla, self.mes, self.año, self.restricciones)
+            self.filas, self.index_filas_semana = main_product_table([], self.plantilla, self.mes, self.año, self.restricciones)
 
             if self.ventanaActual:
                 self.ventanaActual.destroy()
@@ -151,11 +156,11 @@ class Controlador():
         
         list_bloques_directos = controlador.obtener_bloques_de_productTable(tree)     
         
-        diseño, bloques_sin_asignar, restricciones = iniciar_modelo(self.ruta, self.plantilla, self.restricciones, list_bloques_directos)
+        diseño, bloques_sin_asignar, restricciones = iniciar_modelo(self.bloques, self.plantilla, self.restricciones, list_bloques_directos)
 
         self.restricciones = restricciones
 
-        self.filas = main_product_table(diseño, self.plantilla, self.mes, self.año, self.restricciones)
+        self.filas = main_product_table(diseño, self.plantilla, self.mes, self.año, self.restricciones)[0]
 
         if bloques_sin_asignar != []:
             str_bloques_sin_asig = ''

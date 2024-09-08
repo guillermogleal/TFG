@@ -3,6 +3,7 @@ from tkinter import ttk
 from metodos_utiles import semanas_totales_en_mes
 from datetime import datetime
 from restriccion import MAX_CUOTA, MAX_CUOTA_FUERA
+from tkinter import messagebox
 
 
 class ProductTable(tk.Frame):
@@ -126,6 +127,11 @@ class EntryPopup(ttk.Entry):
         total_semanal = 0
         contColumn = 2
         total_semanal_pre =0
+        filas = self.tv.get_children()
+        
+        index_fila_semana = self.master.controlador.index_filas_semana
+
+
 
         '''Insert text into treeview, and delete the entry popup'''
         rowid = self.tv.focus()  # Find row id of the cell which was clicked
@@ -133,6 +139,31 @@ class EntryPopup(ttk.Entry):
         vals = list(vals)  # Convert the values to a list so it becomes mutable
         vals[self.column] = self.get()  # Update values with the new text from the entry widget
         
+        index_fila = filas.index(rowid)
+        
+        if self.column % 2 !=0:  #las columnas pares son de cantidades
+            num_fila_semana = max(filter(lambda x: x < index_fila, index_fila_semana)) # la fila donde está el día de la celda
+
+            id_fila_semana = filas[num_fila_semana]
+
+            dia_mes = int(self.tv.item(id_fila_semana, 'values')[self.column])
+
+            bloques_reconocidos = list(filter(lambda bloque: bloque.fecha.day == dia_mes and bloque.juzgado == self.get(), self.master.controlador.bloques))
+
+            n_reconocidos = len(bloques_reconocidos)
+
+            if n_reconocidos == 1:
+                vals[self.column + 1] = bloques_reconocidos[0].cantidad
+            elif n_reconocidos > 1:
+                
+                vals[self.column + 1] = bloques_reconocidos[0].cantidad
+                
+            else:
+                if self.get() != '':
+                    messagebox.showwarning("Advertencia", "No se encontró ningún bloque que tenga lugar ese día en ese juzgado.")
+
+        
+
         total_semanal_pre = int(vals[14])
 
         while contColumn < 14:
@@ -147,7 +178,7 @@ class EntryPopup(ttk.Entry):
         
         self.tv.item(rowid, values=vals)  # Update the Treeview cell with updated row values
 
-        filas = self.tv.get_children()
+        
         n_filas = len(filas)
         contFilas = n_filas-1
         contenFila = ""
@@ -256,6 +287,8 @@ def obtenerTotalLetrado(letrado, filas):
 def main_product_table(diseño, letrados, mes, año, restricciones):
     filas = []
 
+    index_de_filas_semana = []
+
     ultimo_dia_registrado = 0
     n_semanas, primer_dia, dias_mes = semanas_totales_en_mes(año, mes)
     n_letrados = len(letrados)
@@ -266,6 +299,8 @@ def main_product_table(diseño, letrados, mes, año, restricciones):
     for semana in range(n_semanas) :
         fila_semana, ultimo_dia_registrado = hacer_fila_de_semana(semana, primer_dia, n_columnas, ultimo_dia_registrado, dias_mes)
         filas.append(tuple(fila_semana))
+
+        index_de_filas_semana.append(len(filas) - 1)
 
         for letrado in letrados:
             fila_letrado = hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes)
@@ -304,7 +339,7 @@ def main_product_table(diseño, letrados, mes, año, restricciones):
     filas.append(tuple(list_vacia2))
 
 
-    return filas
+    return filas, index_de_filas_semana
       
 
 """    products = [
