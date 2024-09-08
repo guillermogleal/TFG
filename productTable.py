@@ -4,6 +4,8 @@ from metodos_utiles import semanas_totales_en_mes
 from datetime import datetime
 from restriccion import MAX_CUOTA, MAX_CUOTA_FUERA
 from tkinter import messagebox
+from metodos_utiles import get_tipo_restricciones
+from restriccion import DISPONIBILIDAD
 
 
 class ProductTable(tk.Frame):
@@ -94,6 +96,9 @@ class ProductTable(tk.Frame):
 
             # place Entry Widget
             text = self.tree.item(rowid, 'values')[int(column[1:])-1]
+            if text == 'TOTAL':
+                return
+
             self.entryPopup = EntryPopup(self, rowid, int(column[1:])-1, text)
             self.entryPopup.place(x=x, y=y+pady, width=width, height=height, anchor='w')
     
@@ -139,9 +144,12 @@ class EntryPopup(ttk.Entry):
         vals = list(vals)  # Convert the values to a list so it becomes mutable
         vals[self.column] = self.get()  # Update values with the new text from the entry widget
         
+        if vals[self.column] == "":
+            vals[self.column+1] = ""
+
         index_fila = filas.index(rowid)
         
-        if self.column % 2 !=0:  #las columnas pares son de cantidades
+        if self.column % 2 !=0 and vals[self.column] != 'TOTAL' and vals[self.column] != 'PARCIAL':  #las columnas pares son de cantidades
             num_fila_semana = max(filter(lambda x: x < index_fila, index_fila_semana)) # la fila donde está el día de la celda
 
             id_fila_semana = filas[num_fila_semana]
@@ -161,6 +169,7 @@ class EntryPopup(ttk.Entry):
             else:
                 if self.get() != '':
                     messagebox.showwarning("Advertencia", "No se encontró ningún bloque que tenga lugar ese día en ese juzgado.")
+                    vals[self.column]= ''
 
         
 
@@ -240,7 +249,7 @@ def hacer_fila_de_semana(semana, primer_dia, n_columnas, ultimo_dia_registrado, 
     
     return fila, ultimo_dia_registrado
     
-def hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes):
+def hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes, restricciones):
     fila_letrado = []
     juicios_semana = 0
     cont_juicios_semana = 2
@@ -261,16 +270,30 @@ def hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes):
             if fila_semana[n_columna] != "":
                 dia = fila_semana[n_columna]
                 list_bloque_asig = list(filter(lambda bloque: (bloque.fecha == datetime(año, mes, dia)) and bloque.asignado_a == letrado, diseño))
-                
-                if list_bloque_asig != []:
-                    bloque_asig = list_bloque_asig[0]
-                    fila_letrado.append(bloque_asig.juzgado)
-                    fila_letrado.append(bloque_asig.cantidad)
+                restricciones = get_tipo_restricciones(restricciones, DISPONIBILIDAD)
+                list_restricciones_let_dia = list(filter(lambda restriccion:  restriccion.letrado == letrado and (datetime(año, mes, dia) in restriccion.dias_de_baja), restricciones))
 
+                if list_restricciones_let_dia != []:
+                    if list_restricciones_let_dia[0].parcial:
+                        if list_bloque_asig != []:
+                            bloque_asig = list_bloque_asig[0]
+                            fila_letrado.append("*"+bloque_asig.juzgado)
+                            fila_letrado.append(bloque_asig.cantidad)
+                        else:
+                            fila_letrado.append("PARCIAL")
+                    else:
+                        fila_letrado.append("TOTAL")
                 else:
-                    fila_letrado.append("")
-                    if n_columna != 13:
+
+                    if list_bloque_asig != []:
+                        bloque_asig = list_bloque_asig[0]
+                        fila_letrado.append(bloque_asig.juzgado)
+                        fila_letrado.append(bloque_asig.cantidad)
+
+                    else:
                         fila_letrado.append("")
+                        if n_columna != 13:
+                            fila_letrado.append("")
             else:
                 if len(fila_letrado)<= n_columna:
                     fila_letrado.append("")
@@ -303,7 +326,7 @@ def main_product_table(diseño, letrados, mes, año, restricciones):
         index_de_filas_semana.append(len(filas) - 1)
 
         for letrado in letrados:
-            fila_letrado = hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes)
+            fila_letrado = hacer_fila_de_letrado(letrado, n_columnas, diseño, fila_semana, año, mes, restricciones)
             filas.append(tuple(fila_letrado))
 
     tupla_vacia = ("",) * n_columnas

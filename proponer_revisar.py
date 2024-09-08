@@ -16,7 +16,9 @@ class Proponer_revisar():
         restricciones, preferencias = Operacionalizar.metodo(requisitos)
 
         requisitos.list_bloques = eliminar_dupli_directos(requisitos.list_bloques, requisitos.list_bloques_directos)
-        diseño_esqueletal = Especificar.metodo(requisitos) + requisitos.list_bloques_directos
+        requisitos.list_bloques = requisitos.list_bloques + requisitos.list_bloques_directos
+        
+        diseño_esqueletal = Especificar.metodo(requisitos) 
         diseño_esqueletal.sort(key= lambda bloque: bloque.cantidad, reverse= True)
         
         restricciones = restricciones + requisitos.list_restricciones

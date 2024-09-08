@@ -15,8 +15,36 @@ def buscar_primera_fila(datos_excel, lev):
     
     return cont
 
+def obtener_numero(juzgado):
+
+    for char in juzgado:
+        if char.isdigit():
+            return char
+    
+    return "0"
+
+
 def identificar_juzgado(juzgado, lev):
-    if juzgado == 'J SOC. 3 CORUÑA (A) (CAPITAL) CORUÑA, A':
+
+    if "SANTIAGO" in juzgado:
+
+        num = obtener_numero(juzgado)
+
+        return 'S'+num
+
+    elif "FERROL" in juzgado:
+        num = obtener_numero(juzgado)
+
+        return 'F'+num
+    elif "9" in juzgado:
+        return 'R'
+    elif juzgado == 'J CA 1 A CORUÑA CORUÑA (A) (CAPITAL)':
+        return 'CA1C'
+    elif "CORUÑA" in juzgado:
+        num = obtener_numero(juzgado)
+
+        return 'C'+num
+    elif juzgado == 'J SOC. 3 CORUÑA (A) (CAPITAL) CORUÑA, A':
         return 'C3'
     elif juzgado == 'J SOC. 7 A CORUÑA CORUÑA (A) (CAPITAL)':
         return 'C7'
@@ -72,8 +100,6 @@ def identificar_juzgado(juzgado, lev):
         return 'R'
     elif juzgado == 'J SOC. 1 CORUÑA (A) (CAPITAL) CORUÑA, A' or juzgado == 'J SOC. 1 CORUÑA (A) (CAPITAL) A CORUÑA':
         return 'C1'
-    elif juzgado == 'J CA 1 A CORUÑA CORUÑA (A) (CAPITAL)':
-        return 'CA1C'
     elif juzgado == 'J SOC. 1 SANTIAGO DE COMPOSTELA (CAPITAL) CORUÑA, A' or juzgado == 'J SOC. 1 CORUÑA, A SANTIAGO DE COMPOSTELA (CAPITAL)':
         return 'S1'
     elif juzgado == 'J SOC. 5 CORUÑA (A) (CAPITAL) CORUÑA, A':

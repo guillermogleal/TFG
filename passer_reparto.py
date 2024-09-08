@@ -74,6 +74,8 @@ def crear_bloque(cont_fila, cont_column, datos_excel, fila_con_dias, mes, año):
 
     letrado_asignado = traducir_letrado(letrado_asignado)
 
+    conten = int(datos_excel.iloc[fila_con_dias, cont_column])
+
     fecha = datetime(año, mes, int(datos_excel.iloc[fila_con_dias, cont_column]))
     juzgado = datos_excel.iloc[cont_fila, cont_column]
     cantidad = datos_excel.iloc[cont_fila, cont_column + 1]

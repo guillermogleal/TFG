@@ -17,6 +17,7 @@ from bloque import Bloque
 from principal import iniciar_modelo
 from Passer_from_excel import obtenerBloques
 from conocimiento_de_verificacion import Conocimiento_de_verificacion
+from passer_reparto import obtener_reparto_de_excel
 
 
 
@@ -39,6 +40,19 @@ class Controlador():
         self.index_filas_semana = None
         self.mes = None
         self.año = None
+
+
+    def ventana_entrada_but_insertar(self, ruta):
+
+        list_bloques_BD = obtener_reparto_de_excel(ruta)
+
+        Servicio_BD.eliminar_reparto_BD()
+
+        Servicio_BD.añadir_reparto_BD(list_bloques_BD)
+
+        BD_reparto, BD_plantilla =Servicio_BD.consultar_BD()
+
+        print("")
 
     def ventana_entrada_but_siguiente(self, ruta):
         if ruta != "":
@@ -131,18 +145,12 @@ class Controlador():
 
         self.restricciones = list_restricciones
         self.plantilla = list_letrados
-        if self.ventanaActual:
-            self.ventanaActual.destroy()
+        
             
-        self.ventanaActual = ventana_entrada_fecha.Ventana_Entrada_Fecha(self)
+        self.mes = self.bloques[0].fecha.month
+        self.año = self.bloques[0].fecha.year
 
-    
-    def ventana_entrada_fecha_but_siguiente(self, mes, año):
-
-        self.mes = mes
-        self.año = año
-
-        if controlador.es_fecha_valida(año, mes):
+        if controlador.es_fecha_valida(self.año, self.mes):
             self.filas, self.index_filas_semana = main_product_table([], self.plantilla, self.mes, self.año, self.restricciones)
 
             if self.ventanaActual:
@@ -151,7 +159,11 @@ class Controlador():
             self.ventanaActual = productTable.ProductTable(self, self.filas, True)
         else:
             messagebox.showwarning("Advertencia", "El mes o año introducidos no son válidos.")
-        
+
+    
+    
+
+                
     def productTable_pre_but_siguiente(self, tree):
         
         list_bloques_directos = controlador.obtener_bloques_de_productTable(tree)     
@@ -215,11 +227,14 @@ class Controlador():
             if fila[0] != "":
                 cont_colum = 1
                 while cont_colum < len(fila):
-                    if fila[cont_colum] != "":
+                    if fila[cont_colum] != "" and fila[cont_colum] != "TOTAL" and fila[cont_colum] != "PARCIAL":
                         cantidad = int(fila[cont_colum+1])
                         valores_fila = tree.item(id_fila_semana, "values")
                         dia = int(valores_fila[cont_colum])
-                        bloque = Bloque(cantidad, datetime(self.año, self.mes, dia), fila[cont_colum], [])
+                        if fila[cont_colum][0] == "*":
+                            bloque = Bloque(cantidad, datetime(self.año, self.mes, dia), fila[cont_colum][1:], [])
+                        else:    
+                            bloque = Bloque(cantidad, datetime(self.año, self.mes, dia), fila[cont_colum], [])
                         letrado = list(filter(lambda letrado: (fila[0] == letrado.nombre) , self.plantilla))[0]
                         bloque.asignado_a = letrado
 
