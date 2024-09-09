@@ -8,7 +8,7 @@ from metodos_utiles import get_tipo_restricciones
 from restriccion import DISPONIBILIDAD
 
 
-class ProductTable(tk.Frame):
+class Ventana_Calendario_de_juicios(tk.Frame):
     def __init__(self, controlador, products, pre,**kwargs):
         super().__init__(controlador.root,**kwargs)
         

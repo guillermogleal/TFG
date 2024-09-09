@@ -4,7 +4,7 @@ from passer_reparto import *
 from requisitos import Requisitos
 from configuracion import Configuracion
 from servicio_BD import *
-from productTable import main_product_table
+from ventana_calendario_de_juicios import main_product_table
 
 def print_diseño(diseño, letrados, dias_mes):
     i = 0

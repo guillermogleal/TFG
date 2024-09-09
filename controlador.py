@@ -1,7 +1,7 @@
 import ventana_entrada
 import ventana_letrados
 import ventana_disponibilidad
-import productTable
+import ventana_calendario_de_juicios
 import ventana_entrada_fecha
 from servicio_BD import Servicio_BD
 from tkinter import *
@@ -12,7 +12,7 @@ from letrado import Letrado
 from restriccion import *
 from metodos_utiles import str_to_datetime
 from datetime import datetime
-from productTable import main_product_table
+from ventana_calendario_de_juicios import main_product_table
 from bloque import Bloque
 from principal import iniciar_modelo
 from Passer_from_excel import obtenerBloques
@@ -156,7 +156,7 @@ class Controlador():
             if self.ventanaActual:
                 self.ventanaActual.destroy()
                 
-            self.ventanaActual = productTable.ProductTable(self, self.filas, True)
+            self.ventanaActual = ventana_calendario_de_juicios.Ventana_Calendario_de_juicios(self, self.filas, True)
         else:
             messagebox.showwarning("Advertencia", "El mes o año introducidos no son válidos.")
 
@@ -185,7 +185,7 @@ class Controlador():
         if self.ventanaActual:
             self.ventanaActual.destroy()
             
-        self.ventanaActual = productTable.ProductTable(self, self.filas, False)
+        self.ventanaActual = ventana_calendario_de_juicios.Ventana_Calendario_de_juicios(self, self.filas, False)
 
 
         #Servicio_BD.eliminar_reparto_BD()
