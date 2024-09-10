@@ -4,6 +4,7 @@ import ventana_disponibilidad
 import ventana_calendario_de_juicios
 import ventana_entrada_fecha
 from servicio_BD import Servicio_BD
+from bloque_BD import Bloque_BD
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
@@ -25,7 +26,7 @@ class Controlador():
     def __init__(self):
         
         self.root = tk.Tk()
-        self.root.title("Ventana Principal")
+        self.root.title("Reparto de juicios")
         self.ventanaActual= None
         
         if self.ventanaActual:
@@ -198,6 +199,17 @@ class Controlador():
     def productTable_pos_but_aplicar(self, tree):
         list_bloques = controlador.obtener_bloques_de_productTable(tree)
         bloques_mal = []
+        list_bloques_BD = []
+
+        for bloque in list_bloques:
+            bloque_BD = Bloque_BD(bloque.cantidad, bloque.fecha, bloque.juzgado, bloque.asignado_a.nombre)
+            list_bloques_BD.append(bloque_BD)
+        
+        Servicio_BD.eliminar_reparto_BD()
+
+        Servicio_BD.añadir_reparto_BD(list_bloques_BD)
+
+        """
         str_bloques_mal = ''
         for bloque in list_bloques:
             incumple = Conocimiento_de_verificacion.check_criteria(bloque, self.restricciones, list_bloques)
@@ -209,7 +221,7 @@ class Controlador():
             messagebox.showwarning("Advertencia", "Los siguientes bloques incumplen alguno(s) de los criterios obligatorios\n (cuota max., cuota max. fuera, fecha disponible, max. dias semanales, max. dias semanales fuera, max. juicios semanales):\n" + str_bloques_mal)
         else:
             messagebox.showwarning("Mensaje", "No se detectaron asignaciones no válidas.\n" + str_bloques_mal)
-
+"""
         
 
     def obtener_bloques_de_productTable(self, tree):

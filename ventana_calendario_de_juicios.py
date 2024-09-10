@@ -68,8 +68,8 @@ class Ventana_Calendario_de_juicios(tk.Frame):
             self.botonAplicar = tk.Button(self, text="Aplicar cambios", command= lambda: self.controlador.productTable_pos_but_aplicar(self.tree))
             self.botonAplicar.pack(side= "right", padx= 5)
 
-            self.botonNext = tk.Button(self, text="Siguiente", command= lambda: self.controlador.productTable_pos_but_siguiente(self.tree))
-            self.botonNext.pack(side= "right", padx= 5)
+        #    self.botonNext = tk.Button(self, text="Siguiente", command= lambda: self.controlador.productTable_pos_but_siguiente(self.tree))
+        #    self.botonNext.pack(side= "right", padx= 5)
 
     def onDoubleClick(self, event):
             '''Executed, when a row is double-clicked'''
@@ -331,8 +331,8 @@ def main_product_table(diseño, letrados, mes, año, restricciones):
 
     tupla_vacia = ("",) * n_columnas
     filas.append(tupla_vacia)
-    list_vacia = [""] * (n_columnas-3)
-    list_fila_heads = ["Nombre", "Total", "Cuota"] + list_vacia
+    list_vacia = [""] * (n_columnas-9)
+    list_fila_heads = ["Nombre", "Total", "Cuota", "", "", "", "TOTAL: Baja total", "PARCIAL: Solo juicios en Coruña ", "*bloque: día con baja parcial"] + list_vacia
     filas.append(tuple(list_fila_heads))
 
     total = 0
@@ -350,10 +350,6 @@ def main_product_table(diseño, letrados, mes, año, restricciones):
         cuota_letrado = list(filter(lambda restriccion: isinstance(restriccion, MAX_CUOTA) and restriccion.letrado == letrado, restricciones))
         if len(cuota_letrado) == 1:
             list_fila[2] = cuota_letrado[0].cuota
-
-        cuota_letrado_fuera = list(filter(lambda restriccion: isinstance(restriccion, MAX_CUOTA_FUERA) and restriccion.letrado == letrado, restricciones))
-        if len(cuota_letrado) == 1:
-            list_fila[3] = cuota_letrado_fuera[0].cuota
 
         filas.append(tuple(list_fila))
 
