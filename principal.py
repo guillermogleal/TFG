@@ -5,6 +5,7 @@ from requisitos import Requisitos
 from configuracion import Configuracion
 from servicio_BD import *
 from ventana_calendario_de_juicios import main_product_table
+import random
 
 def print_diseño(diseño, letrados, dias_mes):
     i = 0
@@ -72,7 +73,7 @@ def iniciar_modelo(bloques, plantilla, disponibilidades, list_bloques_directos):
 #        Servicio_BD.añadir_reparto_BD(reparto_BD)
 
     bloques_BD = Servicio_BD.consultar_BD()[0]
-
+    random.shuffle(letrados)
     requisitos = Requisitos(bloques, letrados, restricciones, bloques_BD, list_bloques_directos)
 
     obj_conf = Configuracion(requisitos, letrados)
