@@ -140,8 +140,30 @@ def obtenerBloques(ruta):
     list_juicios = []
     list_bloques = []
     while cont_fila < filas-1:
-        print(fecha_act+":")
+        
+        try:
+            if type(fecha_act) != str:
+                day = fecha_act.day
+                month = fecha_act.month
+                year = fecha_act.year
 
+                if day < 10:
+                    str_day = '0' + str(day)
+                else:
+                    str_day = str(day)
+
+                if month < 10:
+                    str_month = '0' + str(month)
+                else:
+                    str_month = str(month)
+
+                fecha_act = str_day + '/' + str_month + '/' + str(year)
+                celda_act = fecha_act
+            else:
+                print(fecha_act + ":")
+        except TypeError as e:
+            print(f"Se ha producido un error: {e}")
+        
         while  celda_act == fecha_act or type(celda_act) == float:
             if type(celda_act) == str:
                     

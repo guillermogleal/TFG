@@ -7,6 +7,7 @@ from servicio_BD import Servicio_BD
 from bloque_BD import Bloque_BD
 from tkinter import *
 import tkinter as tk
+import openpyxl
 from tkinter import messagebox
 from letrado_BD import Letrado_BD
 from letrado import Letrado
@@ -197,6 +198,9 @@ class Controlador():
         print("")
 
     def productTable_pos_but_aplicar(self, tree):
+        
+        controlador.crear_excel(tree)
+
         list_bloques = controlador.obtener_bloques_de_productTable(tree)
         bloques_mal = []
         list_bloques_BD = []
@@ -259,7 +263,33 @@ class Controlador():
         return list_bloques_directos 
         
      
+    def crear_excel(self, tree):
+        list_hojas = []
+        wb = openpyxl.Workbook()
 
+        hoja1 = wb.active
+        hoja1.title = "Hoja1"
+        
+
+        for letrado in self.plantilla:
+            nueva_hoja = wb.create_sheet(letrado.nombre)
+            list_hojas.append(nueva_hoja)
+
+
+        filas = tree.get_children()
+        for n_fila in filas:
+            fila = tree.item(n_fila, "values")
+
+            if fila[0] == "":
+                for hoja in list_hojas:
+                    hoja.append(fila)
+            else:
+                for hoja in list_hojas:
+                    if hoja.title == fila[0]:
+                        hoja.append(fila)
+
+            hoja1.append(fila)
+        wb.save('resultado_reparto.xlsx')
     
     def es_fecha_valida(self, anio, mes, dia=1):
         try:

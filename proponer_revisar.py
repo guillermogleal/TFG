@@ -70,6 +70,9 @@ class Proponer_revisar():
                     index_sig_bloque+=1
         print(bloques_sin_asig) 
 
+        extensions.remove(letrado_jefe[0])
+        extensions.insert(0, letrado_jefe[0])
+
         #bucle de cambios de ser necesarios
         
         return diseño, bloques_sin_asig, restricciones
