@@ -45,29 +45,29 @@ class Proponer_revisar():
                 let_probados = []
                 
 
-            
-            extension, diseño = Proponer.metodo(extensions, preferencias, diseño_esqueletal, diseño, let_probados, cuotas, index_sig_bloque)
-            
-#            if extension!= None and extension.cantidad == 4 and extension.juzgado == "C2":
-#                llego =True
+            if index_sig_bloque < len(diseño_esqueletal):
+                extension, diseño = Proponer.metodo(extensions, preferencias, diseño_esqueletal, diseño, let_probados, cuotas, index_sig_bloque)
+                
+    #            if extension!= None and extension.cantidad == 4 and extension.juzgado == "C2":
+    #                llego =True
 
-            if extension == -1:
-                print("no se pudo proponer más letrados")
-                return diseño
-            
-            elif extension == None:
-                let_probados=[]
-                index_sig_bloque+=1
-            
-            else:            
-                valor, violacion = Verificar.metodo(extension, restricciones, diseño)
-
-                if not valor:
-                    diseño = Modificar.metodo(diseño, violacion)
-                    let_probados.append(violacion.asignado_a)
-                else:
+                if extension == -1:
+                    print("no se pudo proponer más letrados")
+                    return diseño
+                
+                elif extension == None:
                     let_probados=[]
                     index_sig_bloque+=1
+                
+                else:            
+                    valor, violacion = Verificar.metodo(extension, restricciones, diseño)
+
+                    if not valor:
+                        diseño = Modificar.metodo(diseño, violacion)
+                        let_probados.append(violacion.asignado_a)
+                    else:
+                        let_probados=[]
+                        index_sig_bloque+=1
         print(bloques_sin_asig) 
 
         extensions.remove(letrado_jefe[0])
