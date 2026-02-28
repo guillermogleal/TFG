@@ -69,9 +69,10 @@ class Proponer_revisar():
                         let_probados=[]
                         index_sig_bloque+=1
         print(bloques_sin_asig) 
-
-        extensions.remove(letrado_jefe[0])
-        extensions.insert(0, letrado_jefe[0])
+        
+        if letrado_jefe:
+            extensions.remove(letrado_jefe[0])
+            extensions.insert(0, letrado_jefe[0])
 
         #bucle de cambios de ser necesarios
         
