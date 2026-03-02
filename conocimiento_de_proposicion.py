@@ -318,6 +318,11 @@ class Conocimiento_de_proposicion():
         min_cuota = 500     #valor inicial arbitrario muy alto
         output_letrados = []
 
+        letrado_jefe = list(filter(lambda letrado: letrado.jefe == True, list_letrados))
+        if letrado_jefe:
+            list_letrados.remove(letrado_jefe[0])
+            
+
         for letrado in list_letrados:
             cuota_de_let =list(filter(lambda restriccion: restriccion.letrado == letrado, cuotas))
             n_cuota = cuota_de_let[0].cuota
