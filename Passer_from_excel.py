@@ -44,43 +44,43 @@ def identificar_juzgado(juzgado, lev):
         num = obtener_numero(juzgado)
 
         return 'C'+num
-    elif juzgado == 'J SOC. 3 CORUÑA (A) (CAPITAL) CORUÑA, A':
+    elif (juzgado == 'J SOC. 3 CORUÑA (A) (CAPITAL) CORUÑA, A') or (juzgado == 'TIS SOCIAL 3 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C3'
-    elif juzgado == 'J SOC. 7 A CORUÑA CORUÑA (A) (CAPITAL)':
+    elif (juzgado == 'J SOC. 7 A CORUÑA CORUÑA (A) (CAPITAL)') or (juzgado == 'TIS SOCIAL 7 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C7'
-    elif juzgado == 'J SOC. 1 A CORUÑA FERROL (CAPITAL)':
+    elif juzgado == 'J SOC. 1 A CORUÑA FERROL (CAPITAL)' or juzgado == 'TIS SOCIAL 1 FERROL (CAPITAL) A CORUÑA':
         return 'F1'
     elif juzgado == 'J SOC. 1 FERROL (CAPITAL) CORUÑA, A':
         return 'F1'
-    elif juzgado == 'J SOC. 2 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)':
+    elif juzgado == 'J SOC. 2 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)' or juzgado == 'TIS SOCIAL 2 SANTIAGO DE COMPOSTELA (CAPITAL) A CORUÑA':
         return 'S2'
-    elif juzgado == 'J SOC. 1 A CORUÑA CORUÑA (A) (CAPITAL)':
+    elif (juzgado == 'J SOC. 1 A CORUÑA CORUÑA (A) (CAPITAL)') or (juzgado == 'TIS SOCIAL 1 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C1'
-    elif juzgado == 'J SOC. 4 CORUÑA (A) (CAPITAL) A CORUÑA':
+    elif (juzgado == 'J SOC. 4 CORUÑA (A) (CAPITAL) A CORUÑA') or (juzgado == 'TIS SOCIAL 4 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C4'
     elif juzgado == 'J SOC. 4 A CORUÑA CORUÑA (A) (CAPITAL)':
         return 'C4'
-    elif juzgado == 'J SOC. 6 A CORUÑA CORUÑA (A) (CAPITAL)':
+    elif (juzgado == 'J SOC. 6 A CORUÑA CORUÑA (A) (CAPITAL)') or (juzgado == 'TIS SOCIAL 6 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C6'
     elif juzgado == 'J SOC. 94 A CORUÑA CORUÑA (A) (CAPITAL)':
         return 'R'
     elif juzgado == 'J SOC. 94 CORUÑA (A) (CAPITAL) CORUÑA, A':
         return 'R'
-    elif juzgado == 'J SOC. 2 A CORUÑA FERROL (CAPITAL)':
+    elif juzgado == 'J SOC. 2 A CORUÑA FERROL (CAPITAL)' or juzgado == 'TIS SOCIAL 2 FERROL (CAPITAL) A CORUÑA':
         return 'F2'
-    elif juzgado == 'J SOC. 3 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)':
+    elif juzgado == 'J SOC. 3 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)' or juzgado == 'TIS SOCIAL 3 SANTIAGO DE COMPOSTELA (CAPITAL) A CORUÑA':
         return 'S3'
-    elif juzgado == 'J SOC. 2 A CORUÑA CORUÑA (A) (CAPITAL)':
+    elif (juzgado == 'J SOC. 2 A CORUÑA CORUÑA (A) (CAPITAL)') or (juzgado == 'TIS SOCIAL 2 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C2'
     elif juzgado == 'J SOC. 3 A CORUÑA CORUÑA (A) (CAPITAL)':
         return 'C3'
     elif juzgado == 'J SOC. 93 A CORUÑA CORUÑA (A) (CAPITAL)':
         return 'R'
-    elif juzgado == 'J SOC. 5 A CORUÑA CORUÑA (A) (CAPITAL)':
+    elif (juzgado == 'J SOC. 5 A CORUÑA CORUÑA (A) (CAPITAL)') or (juzgado == 'TIS SOCIAL 5 CORUÑA (A) (CAPITAL) A CORUÑA' ):
         return 'C5'
-    elif juzgado == 'J SOC. 1 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)':
+    elif juzgado == 'J SOC. 1 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)' or juzgado == 'TIS SOCIAL 1 SANTIAGO DE COMPOSTELA (CAPITAL) A CORUÑA':
         return 'S1'
-    elif juzgado == 'J SOC. 4 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)':
+    elif juzgado == 'J SOC. 4 A CORUÑA SANTIAGO DE COMPOSTELA (CAPITAL)' or juzgado == 'TIS SOCIAL 4 SANTIAGO DE COMPOSTELA (CAPITAL) A CORUÑA':
         return 'S4'
     elif juzgado == 'J SOC. 4 CORUÑA, A CORUÑA (A) (CAPITAL)':
         return 'C4'
@@ -100,7 +100,7 @@ def identificar_juzgado(juzgado, lev):
         return 'R'
     elif juzgado == 'J SOC. 1 CORUÑA (A) (CAPITAL) CORUÑA, A' or juzgado == 'J SOC. 1 CORUÑA (A) (CAPITAL) A CORUÑA':
         return 'C1'
-    elif juzgado == 'J SOC. 1 SANTIAGO DE COMPOSTELA (CAPITAL) CORUÑA, A' or juzgado == 'J SOC. 1 CORUÑA, A SANTIAGO DE COMPOSTELA (CAPITAL)':
+    elif juzgado == 'J SOC. 1 SANTIAGO DE COMPOSTELA (CAPITAL) CORUÑA, A' or juzgado == 'J SOC. 1 CORUÑA, A SANTIAGO DE COMPOSTELA (CAPITAL)' or juzgado == 'TIS SOCIAL 1 SANTIAGO DE COMPOSTELA (CAPITAL) A CORUÑA':
         return 'S1'
     elif juzgado == 'J SOC. 5 CORUÑA (A) (CAPITAL) CORUÑA, A':
         return 'C5'
